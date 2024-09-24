@@ -1,0 +1,303 @@
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { SelectForm } from '@/components/sutepa/forms'
+import { updatePersona } from '@/store/afiliado'
+import Card from '@/components/ui/Card'
+import Textinput from '@/components/ui/Textinput'
+import Numberinput from '@/components/ui/Numberinput'
+import DatePicker from '../ui/DatePicker'
+import moment from 'moment'
+import useFetchData from '@/helpers/useFetchData'
+import Loading from '@/components/Loading'
+
+const initialForm = {
+  sexo_id: null
+}
+
+function DatosPersonalesData ({ register, setValue, errors, watch }) {
+  const dispatch = useDispatch()
+  const { user } = useSelector(state => state.auth)
+  const { activeAfiliado } = useSelector(state => state.afiliado)
+  const [picker, setPicker] = useState(null)
+  const [picker2, setPicker2] = useState(null)
+  const [cuil, setCuil] = useState('')
+  const [dni, setDni] = useState('')
+  const [legajo, setLegajo] = useState('')
+  const [, setFormData] = useState(initialForm)
+  const [correoElectronico, setCorreoElectronico] = useState('')
+  const [correoError, setCorreoError] = useState(null)
+  const [telefono, setTelefono] = useState('')
+  const { estadoCivil, nacionalidad, sexo } = useFetchData()
+  const [isLoading, setIsLoading] = useState(true)
+
+  const handleDateChange = (date, field) => {
+    if (field === 'fecha_afiliacion') {
+      setPicker(date)
+      setValue(field, date)
+    } else if (field === 'fecha_nacimiento') {
+      setPicker2(date)
+      setValue(field, date)
+    }
+  }
+
+  const handleChange = setter => e => {
+    const value = e.target.value
+    setter(value)
+    setValue(e.target.name, value)
+  }
+
+  const handleDniChange = e => {
+    const value = e.target.value
+    const cleanedValue = value.replace(/[^\d]/g, '')
+    const dniFormat = /^(\d{1,2})(\d{3})(\d{3})$/
+    let formattedDni = ''
+    const maxLength = 8
+
+    if (cleanedValue.length > maxLength) {
+      return
+    }
+
+    if (cleanedValue.length > 1 && cleanedValue.length <= 9) {
+      if (cleanedValue.length <= 5) {
+        formattedDni = cleanedValue.replace(dniFormat, '$1.$2.$3')
+      } else {
+        formattedDni = cleanedValue.replace(dniFormat, '$1.$2.$3')
+      }
+    } else {
+      formattedDni = cleanedValue
+    }
+
+    setDni(formattedDni)
+    setValue('dni', formattedDni)
+  }
+
+  const handleSelectChange = (field, e) => {
+    const { value } = e.target
+    const fieldValue = parseInt(value)
+    setFormData(prevState => ({
+      ...prevState,
+      [field]: fieldValue
+    }))
+    setValue(field, fieldValue)
+  }
+
+  const extensionesPermitidas = [
+    'gmail.com',
+    'hotmail.com',
+    'yahoo.com.ar',
+    'pami.org.ar'
+  ]
+
+  const validarCorreoElectronico = (email) => {
+    const dominio = email.split('@')[1]
+    if (dominio && !extensionesPermitidas.includes(dominio)) {
+      setCorreoError('El correo electrónico puede estar mal escrito. Asegúrate de que termine en ".gmail.com", ".hotmail.com", ".yahoo.com.ar", o ".pami.org.ar".')
+    } else {
+      setCorreoError(null)
+    }
+  }
+
+  const handleCorreoElectronicoChange = (e) => {
+    const value = e.target.value
+    setCorreoElectronico(value)
+    setValue('email', value)
+    validarCorreoElectronico(value)
+  }
+
+  useEffect(() => {
+    if (activeAfiliado) {
+      const { persona } = activeAfiliado
+      const fechaAfiliacion = persona.fecha_afiliacion ? moment(persona.fecha_afiliacion, 'YYYY-MM-DD').toDate() : null
+      const fechaNacimiento = persona.fecha_nacimiento ? moment(persona.fecha_nacimiento, 'YYYY-MM-DD').toDate() : null
+
+      // Actualización de los estados individuales
+      setLegajo(persona.legajo || '')
+      setCuil(persona.cuil || '')
+      setDni(persona.dni || '')
+      setCorreoElectronico(persona.email || '')
+      setTelefono(persona.telefono || '')
+
+      // Actualización de los pickers de fecha
+      setPicker(fechaAfiliacion ? [fechaAfiliacion] : [])
+      setPicker2(fechaNacimiento ? [fechaNacimiento] : [])
+
+      // Actualización del estado formData
+      setFormData({
+        sexo_id: persona.sexo_id || null,
+        estado_civil_id: persona.estado_civil_id || null,
+        nacionalidad_id: persona.nacionalidad_id || null
+      })
+
+      // Actualización de todos los valores con setValue
+      for (const key in persona) {
+        setValue(key, persona[key])
+      }
+    }
+  }, [activeAfiliado, setValue])
+
+  useEffect(() => {
+    const personaData = {
+      legajo,
+      fecha_afiliacion: picker ? moment(picker[0]).format('YYYY-MM-DD') : null,
+      nombre: watch('nombre'),
+      apellido: watch('apellido'),
+      sexo_id: parseInt(watch('sexo_id')) || null,
+      fecha_nacimiento: picker2 ? moment(picker2[0]).format('YYYY-MM-DD') : null,
+      estado_civil_id: parseInt(watch('estado_civil_id')) || null,
+      tipo_documento: watch('tipo_documento') || null,
+      dni,
+      cuil,
+      email: watch('email') || null,
+      telefono,
+      nacionalidad_id: parseInt(watch('nacionalidad_id')) || null,
+      users_id: user.id
+    }
+
+    dispatch(updatePersona(personaData))
+  }, [picker, picker2, legajo, dni, cuil, correoElectronico, telefono, watch, dispatch, user.id])
+
+  useEffect(() => {
+    if (estadoCivil.length && nacionalidad.length && sexo.length) {
+      setIsLoading(false)
+    }
+  }, [estadoCivil, nacionalidad, sexo])
+
+  return (
+    <>
+      {isLoading
+        ? (
+          <Loading className='mt-28 md:mt-64' />
+          )
+        : (
+          <div>
+            <h4 className='card-title text-center bg-blue-500 dark:bg-gray-700 text-white rounded-md p-2'>
+              Datos Personales
+            </h4>
+
+            <Card>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+
+                <div>
+                  <label htmlFor='default-picker' className='form-label'>
+                    Nombre
+                    <strong className='obligatorio'>(*)</strong>
+                  </label>
+                  <Textinput
+                    name='nombre'
+                    type='text'
+                    register={register}
+                    placeholder='Ingrese el nombre'
+                    error={errors.nombre}
+                    onChange={handleChange(setCorreoElectronico)}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor='default-picker' className='form-label'>
+                    Apellido
+                    <strong className='obligatorio'>(*)</strong>
+                  </label>
+                  <Textinput
+                    name='apellido'
+                    type='text'
+                    register={register}
+                    placeholder='Ingrese el apellido'
+                    error={errors.apellido}
+                    onChange={handleChange(setCorreoElectronico)}
+                  />
+                </div>
+
+                <SelectForm
+                  register={register('sexo_id')}
+                  title='Sexo'
+                  options={sexo}
+                  onChange={(e) => handleSelectChange('sexo_id', e)}
+                />
+
+                <div>
+                  <label htmlFor='default-picker' className='form-label'>
+                    Fecha de Inscripción
+                  </label>
+                  <DatePicker
+                    value={picker}
+                    id='fecha_afiliacion'
+                    placeholder='Seleccione la fecha de Inscripción'
+                    onChange={(date) => handleDateChange(date, 'fecha_afiliacion')}
+                  />
+                  <input type='hidden' {...register('fecha_afiliacion')} />
+                </div>
+
+                <div>
+                  <label htmlFor='default-picker' className='form-label'>
+                    Fecha de Nacimiento
+                  </label>
+                  <DatePicker
+                    value={picker2}
+                    id='fecha_nacimiento'
+                    placeholder='Seleccione la fecha de nacimiento'
+                    onChange={(date) => handleDateChange(date, 'fecha_nacimiento')}
+                  />
+                  <input type='hidden' {...register('fecha_nacimiento')} />
+                </div>
+
+                <SelectForm
+                  register={register('estado_civil_id')}
+                  title='Estado Civil'
+                  options={estadoCivil}
+                  onChange={(e) => handleSelectChange('estado_civil_id', e)}
+                />
+
+                <SelectForm
+                  register={register('nacionalidad_id')}
+                  title='Nacionalidad'
+                  options={nacionalidad}
+                  onChange={(e) => handleSelectChange('nacionalidad_id', e)}
+                />
+
+                <div>
+                  <label htmlFor='default-picker' className='form-label'>
+                    Documento
+                    <strong className='obligatorio'>(*)</strong>
+                  </label>
+                  <Numberinput
+                    register={register}
+                    id='dni'
+                    placeholder='Ingrese el número de documento'
+                    value={dni}
+                    error={errors.dni}
+                    onChange={handleDniChange}
+                  />
+                </div>
+
+                <Textinput
+                  label='Correo Electrónico'
+                  register={register}
+                  className='minuscula'
+                  type='text'
+                  id='email'
+                  name='email'
+                  placeholder='Ingrese el correo electrónico'
+                  value={correoElectronico}
+                  onChange={handleCorreoElectronicoChange}
+                  error={correoError}
+                />
+                {correoError && <span className='text-red-500'>{correoError}</span>}
+
+                <Numberinput
+                  label='Teléfono'
+                  register={register}
+                  id='telefono'
+                  type='number'
+                  placeholder='Ingrese el número de teléfono'
+                  value={telefono}
+                  onChange={handleChange(setTelefono)}
+                />
+              </div>
+            </Card>
+          </div>
+          )}
+    </>
+  )
+}
+
+export default DatosPersonalesData
