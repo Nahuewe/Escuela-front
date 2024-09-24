@@ -1,11 +1,45 @@
 import React, { useEffect, useState } from 'react'
+import { useAfiliadoStore, useDocenteStore } from '@/helpers'
+import { sutepaApi } from '@/api'
 import Card from '@/components/ui/Card'
 import Loading from '@/components/Loading'
+import EstadisticasDashboard from './EstadisticasDashboard'
 
 const Dashboard = () => {
+  const { afiliadosSinPaginar, startLoadingAfiliado, startGetAfiliadosSinPaginar } = useAfiliadoStore()
+  const { docentesSinPaginar, startLoadingDocente, startGetDocenteSinPaginar } = useDocenteStore()
+  const [totalUsers, setTotalUsers] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [todos, setTodos] = useState([])
   const [newTodo, setNewTodo] = useState('')
+
+  const formatObject = (data) => {
+    return data
+  }
+
+  const startSelectUsers = async () => {
+    try {
+      const response = await sutepaApi.get('/user')
+      const { data } = response.data
+      return formatObject(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const usersData = await startSelectUsers()
+      setTotalUsers(usersData.length)
+      await startLoadingAfiliado()
+      await startLoadingDocente()
+      await startGetAfiliadosSinPaginar()
+      await startGetDocenteSinPaginar()
+      setIsLoading(false)
+    }
+
+    fetchData()
+  }, [])
 
   const handleInputChange = (e) => {
     setNewTodo(e.target.value)
@@ -53,6 +87,14 @@ const Dashboard = () => {
                 <p className='text-lg mx-0 my-auto hidden md:flex'>Dashboard</p>
               </div>
             </Card>
+
+            <div className='mt-4 grid sm:grid-cols-2 md:grid-cols-3 grid-cols-1 gap-4'>
+              <EstadisticasDashboard
+                afiliadosSinPaginar={afiliadosSinPaginar}
+                totalUsers={totalUsers}
+                docentesSinPaginar={docentesSinPaginar}
+              />
+            </div>
 
             <div className='mt-8'>
               <h3 className='text-2xl font-bold text-gray-800 dark:text-gray-200'>Lista de Tareas</h3>

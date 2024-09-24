@@ -17,8 +17,7 @@ const FormValidationSaving = yup
     password: yup.string().required('La contraseña es requerida'),
     correo: yup.string().required('El correo es requerido'),
     telefono: yup.string().nullable(),
-    roles_id: yup.string().notOneOf([''], 'Debe seleccionar un rol'),
-    seccional_id: yup.string().notOneOf([''], 'Debe seleccionar una seccional')
+    roles_id: yup.string().notOneOf([''], 'Debe seleccionar un rol')
   })
   .required()
 
@@ -29,18 +28,16 @@ const FormValidationUpdate = yup
     username: yup.string().required('El usuario es requerido'),
     correo: yup.string().required('El correo es requerido'),
     telefono: yup.string().nullable(),
-    roles_id: yup.string().notOneOf([''], 'Debe seleccionar un rol'),
-    seccional_id: yup.string().notOneOf([''], 'Debe seleccionar una seccional')
+    roles_id: yup.string().notOneOf([''], 'Debe seleccionar un rol')
   })
   .required()
 
 export const UserForm = ({ fnAction, activeUser = null }) => {
   const { user } = useSelector((state) => state.auth)
   const [roles, setRoles] = useState([])
-  const [seccionales, setSeccionales] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
-  const { startSelectRoles, startSelectSeccionales } = useGetParameters()
+  const { startSelectRoles } = useGetParameters()
 
   const {
     register,
@@ -53,15 +50,16 @@ export const UserForm = ({ fnAction, activeUser = null }) => {
   })
 
   const onSubmit = async (data) => {
-    await fnAction(data)
+    await fnAction({
+      ...data,
+      seccional_id: 1
+    })
   }
 
   async function loadingInit () {
     const rolesData = await startSelectRoles()
     setRoles(rolesData)
-
-    const seccionalesData = await startSelectSeccionales()
-    setSeccionales(seccionalesData)
+    setValue('seccional_id', 1)
 
     if (activeUser) {
       Object.entries(activeUser).forEach(([key, value]) => {
@@ -69,10 +67,7 @@ export const UserForm = ({ fnAction, activeUser = null }) => {
       })
 
       setValue('roles_id', activeUser.roles_id)
-      setValue('seccional_id', activeUser.seccional_id)
       setValue('username', activeUser.user)
-    } else {
-      setValue('password', 'SUTEPA$123')
     }
 
     setIsLoading(false)
@@ -161,12 +156,11 @@ export const UserForm = ({ fnAction, activeUser = null }) => {
                   type={showPassword ? 'text' : 'password'}
                   placeholder='Contraseña'
                   register={register}
-                  disabled={!activeUser}
                   error={errors.password}
                 />
                 <button
                   type='button'
-                  className='absolute top-1/2 right-4 mb-1'
+                  className='absolute top-[45%] right-4 mb-1'
                   onClick={togglePasswordVisibility}
                 >
                   {showPassword
@@ -224,21 +218,6 @@ export const UserForm = ({ fnAction, activeUser = null }) => {
                   register={register}
                   error={errors.roles_id}
                   placeholder='Seleccione un rol'
-                  disabled={!isEditable}
-                />
-              </label>
-            </div>
-
-            <div>
-              <label htmlFor='seccional_id' className='form-label space-y-2'>
-                Seccionales
-                <strong className='obligatorio'>(*)</strong>
-                <Select
-                  name='seccional_id'
-                  options={seccionales}
-                  register={register}
-                  error={errors.seccional_id}
-                  placeholder='Seleccione una seccional'
                   disabled={!isEditable}
                 />
               </label>

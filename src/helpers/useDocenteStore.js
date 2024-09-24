@@ -1,44 +1,44 @@
 /* eslint-disable no-unused-vars */
 import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
-import { handleAgencia, handleAgenciaSinpaginar, setErrorMessage } from '@/store/agencia'
+import { handleDocente, handleDocenteSinPaginar, setErrorMessage } from '@/store/docente'
 import { handleShowEdit, handleShowModal } from '@/store/layout'
 import { sutepaApi } from '../api'
 import { useState } from 'react'
 
-export const useAgenciaStore = () => {
-  const { agencias, agenciasSinPaginar, paginate, activeAgencia } = useSelector(state => state.agencia)
+export const useDocenteStore = () => {
+  const { docentes, docentesSinPaginar, paginate, activeDocente } = useSelector(state => state.docente)
   const [currentPage, setCurrentPage] = useState(1)
   const dispatch = useDispatch()
 
-  const startLoadingAgencia = async (page = 1) => {
+  const startLoadingDocente = async (page = 1) => {
     try {
       const response = await sutepaApi.get(`/agencia?page=${page}`)
       const { data, meta } = response.data
-      dispatch(handleAgencia({ data, meta }))
+      dispatch(handleDocente({ data, meta }))
       setCurrentPage(page)
     } catch (error) {
       console.log(error)
     }
   }
 
-  const startGetAgenciasSinPaginar = async () => {
+  const startGetDocenteSinPaginar = async () => {
     try {
       const response = await sutepaApi.get('/agenciaAll')
       const { data } = response.data
-      dispatch(handleAgenciaSinpaginar(data))
+      dispatch(handleDocenteSinPaginar(data))
     } catch (error) {
       console.log(error)
     }
   }
 
-  const startSavingAgencia = async (form) => {
+  const startSavingDocente = async (form) => {
     try {
       const response = await sutepaApi.post('/agencia', form)
-      await startLoadingAgencia(currentPage)
+      await startLoadingDocente(currentPage)
       dispatch(handleShowModal())
 
-      toast.success('Agencia agregada con exito')
+      toast.success('Docente agregado con exito')
     } catch (error) {
       let errorMessage = 'Error desconocido'
       if (error.response && error.response.data && error.response.data.errors) {
@@ -55,15 +55,15 @@ export const useAgenciaStore = () => {
     }
   }
 
-  const startUpdateAgencia = async (form) => {
+  const startUpdateDocente = async (form) => {
     try {
-      const id = activeAgencia.id
+      const id = activeDocente.id
       const response = await sutepaApi.put(`/agencia/${id}`, form)
       const { data } = response.data
-      await startLoadingAgencia(currentPage)
+      await startLoadingDocente(currentPage)
       dispatch(handleShowEdit())
 
-      toast.success('Agencia actualizada con exito')
+      toast.success('Docente actualizado con exito')
     } catch (error) {
       let errorMessage = 'Error desconocido'
       if (error.response && error.response.data && error.response.data.errors) {
@@ -80,23 +80,23 @@ export const useAgenciaStore = () => {
     }
   }
 
-  const startDeleteAgencia = async () => {
+  const startDeleteDocente = async () => {
     try {
-      const id = activeAgencia.id
+      const id = activeDocente.id
       await sutepaApi.delete(`/agencia/${id}`)
-      await startLoadingAgencia(currentPage)
+      await startLoadingDocente(currentPage)
 
-      toast.success('Agencia eliminada con exito')
+      toast.success('Docente eliminado con exito')
     } catch (error) {
       toast.error('No se pudo realizar la operación')
     }
   }
 
-  const startSearchAgencia = async (search, page = 1) => {
+  const startSearchDocente = async (search, page = 1) => {
     try {
       const response = await sutepaApi.get(`/buscar-agencia?query=${search}&page=${page}`)
       const { data, meta } = response.data
-      dispatch(handleAgencia({ data, meta }))
+      dispatch(handleDocente({ data, meta }))
     } catch (error) {
       let errorMessage = 'Error desconocido'
       if (error.response && error.response.data && error.response.data.message) {
@@ -105,24 +105,24 @@ export const useAgenciaStore = () => {
         errorMessage = error.message
       }
 
-      console.error('Error en la búsqueda de agencia:', errorMessage)
+      console.error('Error en la búsqueda de docente:', errorMessage)
       toast.error(`No se pudo realizar la búsqueda: ${errorMessage}`)
     }
   }
 
   return {
     //* Propiedades
-    agencias,
-    agenciasSinPaginar,
+    docentes,
+    docentesSinPaginar,
     paginate,
-    activeAgencia,
+    activeDocente,
 
     //* Metodos
-    startLoadingAgencia,
-    startGetAgenciasSinPaginar,
-    startSavingAgencia,
-    startDeleteAgencia,
-    startUpdateAgencia,
-    startSearchAgencia
+    startLoadingDocente,
+    startGetDocenteSinPaginar,
+    startSavingDocente,
+    startDeleteDocente,
+    startUpdateDocente,
+    startSearchDocente
   }
 }

@@ -18,7 +18,7 @@ export const menuItems = [
   {
     title: 'Docentes',
     icon: 'heroicons-outline:user-circle',
-    link: 'agencias'
+    link: 'docentes'
   },
   {
     title: 'Usuarios',
@@ -51,7 +51,7 @@ export const menuNormal = [
   {
     title: 'Docentes',
     icon: 'heroicons-outline:user-circle',
-    link: 'agencias'
+    link: 'docentes'
   }
 ]
 

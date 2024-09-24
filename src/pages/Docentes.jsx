@@ -9,22 +9,18 @@ import { handleShowDelete, handleShowEdit } from '@/store/layout'
 import Pagination from '@/components/ui/Pagination'
 import Loading from '@/components/Loading'
 import Tooltip from '@/components/ui/Tooltip'
-import { useAgenciaStore } from '@/helpers'
-import { setActiveAgencia } from '../store/agencia'
-import { AgenciaForm } from '../components/sutepa/forms/'
+import { useDocenteStore } from '@/helpers'
+import { setActiveDocente } from '../store/docente'
+import { DocenteForm } from '../components/sutepa/forms'
 import { TextInput } from 'flowbite-react'
 
 const columns = [
   {
-    label: 'UGL',
-    field: 'ugl'
-  },
-  {
-    label: 'Agencia',
+    label: 'Docente',
     field: 'agencia'
   },
   {
-    label: 'Domicilio Laboral',
+    label: 'Formación Profesional',
     field: 'domicilio_trabajo'
   },
   {
@@ -37,39 +33,39 @@ const columns = [
   }
 ]
 
-export const Agencias = () => {
-  const { agencias, paginate, activeAgencia, startLoadingAgencia, startSavingAgencia, startDeleteAgencia, startUpdateAgencia, startSearchAgencia } = useAgenciaStore()
+export const Docentes = () => {
+  const { docentes, paginate, activeDocente, startLoadingDocente, startSavingDocente, startDeleteDocente, startUpdateDocente, startSearchDocente } = useDocenteStore()
   const dispatch = useDispatch()
   const [search, setSearch] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
   function onEdit (id) {
-    dispatch(setActiveAgencia(id))
+    dispatch(setActiveDocente(id))
     dispatch(handleShowEdit())
   }
 
   function onDelete (id) {
-    dispatch(setActiveAgencia(id))
+    dispatch(setActiveDocente(id))
     dispatch(handleShowDelete())
   }
 
   const onSearch = async ({ target: { value } }) => {
     setSearch(value)
     if (value.length === 0) {
-      await loadingAgencia()
+      await loadingDocente()
     }
     if (value.length <= 1) return
-    await startSearchAgencia(value)
+    await startSearchDocente(value)
   }
 
-  const loadingAgencia = async (page = 1) => {
+  const loadingDocente = async (page = 1) => {
     if (!isLoading) setIsLoading(true)
-    await startLoadingAgencia(page)
+    await startLoadingDocente(page)
     setIsLoading(false)
   }
 
   useEffect(() => {
-    loadingAgencia()
+    loadingDocente()
   }, [])
 
   return (
@@ -81,7 +77,7 @@ export const Agencias = () => {
             <>
               <Card>
                 <div className='mb-4 md:flex md:justify-between'>
-                  <h1 className='text-2xl font-semibold dark:text-white mb-4 md:mb-0'>Listado de Agencias</h1>
+                  <h1 className='text-2xl font-semibold dark:text-white mb-4 md:mb-0'>Listado de Docentes</h1>
                   <div className='flex flex-col md:flex-row items-start md:items-center gap-4'>
                     <div className='flex gap-2'>
                       <div className='relative'>
@@ -104,24 +100,24 @@ export const Agencias = () => {
                         </div>
                       </div>
                       <Modal
-                        title='Agregar Agencia'
+                        title='Agregar Docente'
                         label='Agregar'
-                        labelClass='bg-red-600 hover:bg-red-800 text-white items-center text-center py-2 px-6 rounded-lg'
+                        labelClass='bg-blue-600 hover:bg-blue-800 text-white items-center text-center py-2 px-6 rounded-lg'
                         centered
                         children={
-                          <AgenciaForm
-                            fnAction={startSavingAgencia}
+                          <DocenteForm
+                            fnAction={startSavingDocente}
                           />
                       }
                       />
 
                       <EditModal
-                        title='Editar Agencia'
+                        title='Editar Docente'
                         centered
                         children={
-                          <AgenciaForm
-                            fnAction={startUpdateAgencia}
-                            activeAgencia={activeAgencia}
+                          <DocenteForm
+                            fnAction={startUpdateDocente}
+                            activeDocente={activeDocente}
                           />
                       }
                       />
@@ -129,10 +125,10 @@ export const Agencias = () => {
                       <DeleteModal
                         themeClass='bg-slate-900 dark:bg-slate-800 dark:border-b dark:border-slate-700'
                         centered
-                        title='Eliminar Agencia'
+                        title='Eliminar Docente'
                         message='¿Estás seguro?'
                         labelBtn='Aceptar'
-                        btnFunction={startDeleteAgencia}
+                        btnFunction={startDeleteDocente}
                       />
                     </div>
                   </div>
@@ -155,10 +151,9 @@ export const Agencias = () => {
                         </thead>
                         <tbody className='bg-white divide-y divide-slate-100 dark:bg-slate-800 dark:divide-slate-700'>
                           {
-                            (agencias && agencias.length > 0)
-                              ? (agencias.map((agencia) => (
+                            (docentes && docentes.length > 0)
+                              ? (docentes.map((agencia) => (
                                 <tr key={agencia.id}>
-                                  <td className='table-td'>{agencia.ugl}</td>
                                   <td className='table-td'>{agencia.nombre}</td>
                                   <td className='table-td'>{agencia.domicilio_trabajo}</td>
                                   <td className='table-td'>{agencia.telefono_laboral}</td>
@@ -228,8 +223,8 @@ export const Agencias = () => {
                             paginate={paginate}
                             onPageChange={(page) =>
                               search !== ''
-                                ? startSearchAgencia(search, page)
-                                : startLoadingAgencia(page)}
+                                ? startSearchDocente(search, page)
+                                : startLoadingDocente(page)}
                             text
                           />
                         </div>

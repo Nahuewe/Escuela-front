@@ -31,10 +31,6 @@ const columns = [
     field: 'correo'
   },
   {
-    label: 'Seccional',
-    field: 'seccional'
-  },
-  {
     label: 'Rol',
     field: 'roles'
   },
@@ -91,7 +87,7 @@ export const Users = () => {
                     <Modal
                       title='Agregar Usuario'
                       label='Agregar'
-                      labelClass='bg-red-600 hover:bg-red-800 text-white items-center text-center py-2 px-6 rounded-lg'
+                      labelClass='bg-blue-600 hover:bg-blue-800 text-white items-center text-center py-2 px-6 rounded-lg'
                       centered
                       children={
                         <UserForm
@@ -145,7 +141,6 @@ export const Users = () => {
                               <td className='table-td'>{usuario.apellido}</td>
                               <td className='table-td'>{usuario.user}</td>
                               <td className='table-td'>{usuario.correo}</td>
-                              <td className='table-td'>{usuario.seccional}</td>
                               <td className='table-td'>{usuario.rol}</td>
                               <td className='table-td'>
                                 <span

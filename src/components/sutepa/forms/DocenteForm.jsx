@@ -5,24 +5,21 @@ import * as yup from 'yup'
 import Textinput from '@/components/ui/Textinput'
 import Button from '@/components/ui/Button'
 import Loading from '@/components/Loading'
-import { SelectForm } from '@/components/sutepa/forms'
 import { sutepaApi } from '../../../api'
 
 const FormValidationSaving = yup
   .object({
-    ugl_id: yup.string().notOneOf([''], 'Debe seleccionar una ugl'),
-    nombre: yup.string().required('La agencia es requerida')
+    nombre: yup.string().required('el nombre es requerido')
   })
   .required()
 
 const FormValidationUpdate = yup
   .object({
-    ugl_id: yup.string().notOneOf([''], 'Debe seleccionar una ugl'),
-    nombre: yup.string().required('La agencia es requerida')
+    nombre: yup.string().required('el nombre es requerido')
   })
   .required()
 
-export const AgenciaForm = ({ fnAction, activeAgencia = null }) => {
+export const DocenteForm = ({ fnAction, activeDocente = null }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [isUglLoading, setIsUglLoading] = useState(true)
   const [ugl, setUgl] = useState([])
@@ -45,19 +42,22 @@ export const AgenciaForm = ({ fnAction, activeAgencia = null }) => {
     handleSubmit,
     setValue
   } = useForm({
-    resolver: yupResolver(activeAgencia ? FormValidationUpdate : FormValidationSaving)
+    resolver: yupResolver(activeDocente ? FormValidationUpdate : FormValidationSaving)
   })
 
   const onSubmit = async (data) => {
-    await fnAction(data)
+    await fnAction({
+      ...data,
+      ugl_id: 1
+    })
   }
 
   async function loadingInit () {
-    if (activeAgencia) {
-      setValue('ugl_id', activeAgencia.ugl_id)
-      setValue('nombre', activeAgencia.nombre)
-      setValue('domicilio_trabajo', activeAgencia.domicilio_trabajo)
-      setValue('telefono_laboral', activeAgencia.telefono_laboral)
+    if (activeDocente) {
+      setValue('ugl_id', 1)
+      setValue('nombre', activeDocente.nombre)
+      setValue('domicilio_trabajo', activeDocente.domicilio_trabajo)
+      setValue('telefono_laboral', activeDocente.telefono_laboral)
     }
     setIsLoading(false)
   }
@@ -70,7 +70,7 @@ export const AgenciaForm = ({ fnAction, activeAgencia = null }) => {
     if (ugl.length > 0) {
       loadingInit()
     }
-  }, [ugl, activeAgencia])
+  }, [ugl, activeDocente])
 
   return (
     <>
@@ -80,25 +80,15 @@ export const AgenciaForm = ({ fnAction, activeAgencia = null }) => {
           )
         : (
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 relative'>
-            <div>
-              <label htmlFor='ugl_id' className='form-label space-y-2'>
-                UGL
-                <strong className='obligatorio'>(*)</strong>
-                <SelectForm
-                  register={register('ugl_id')}
-                  options={ugl}
-                />
-              </label>
-            </div>
 
             <div>
               <label htmlFor='nombre' className='form-label space-y-2'>
-                Agencia
+                Docente
                 <strong className='obligatorio'>(*)</strong>
                 <Textinput
                   name='nombre'
                   type='text'
-                  placeholder='Nombre de la agencia'
+                  placeholder='Nombre del docente'
                   register={register}
                   error={errors.nombre}
                 />
@@ -107,11 +97,11 @@ export const AgenciaForm = ({ fnAction, activeAgencia = null }) => {
 
             <div>
               <label htmlFor='domicilio_trabajo' className='form-label space-y-2'>
-                Domicilio Laboral
+                Formación Profesional
                 <Textinput
                   name='domicilio_trabajo'
                   type='text'
-                  placeholder='Domicilio Laboral'
+                  placeholder='Formación profesional'
                   register={register}
                 />
               </label>

@@ -4,7 +4,7 @@ import user from './user'
 import afiliado from './afiliado'
 import seccional from './seccional'
 import localidad from './localidad'
-import agencia from './agencia'
+import docente from './docente'
 
 const rootReducer = {
   layout,
@@ -12,7 +12,7 @@ const rootReducer = {
   user,
   seccional,
   localidad,
-  agencia,
-  afiliado
+  afiliado,
+  docente
 }
 export default rootReducer
