@@ -1,1 +1,1 @@
-export { default as sutepaApi } from './sutepaApi'
+export { default as edjaApi } from './edjaApi'

@@ -1,5 +1,3 @@
 export * from './UserForm'
-export * from './SeccionalForm'
-export * from './LocalidadForm'
 export * from './DocenteForm'
 export * from './SelectForm'

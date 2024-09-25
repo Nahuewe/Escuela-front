@@ -6,8 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useSelector } from 'react-redux'
 import * as yup from 'yup'
 import DatosPersonalesData from '@/components/forms/DatosPersonalesData'
-import AfiliadoDomicilioData from '@/components/forms/AfiliadoDomicilioData'
-import DocumentacionAdicionalData from '@/components/forms/DocumentacionAdicionalData'
 import Loading from '@/components/Loading'
 import Button from '@/components/ui/Button'
 
@@ -30,15 +28,14 @@ export const Create = () => {
     formState: { errors, isSubmitting },
     handleSubmit,
     setValue,
-    watch,
-    reset
+    watch
   } = useForm({
     resolver: yupResolver(FormValidationSchema)
   })
 
   const onSubmit = async (data) => {
     if (!activeAfiliado) {
-      await startSavingAfiliado(data)
+      // await startSavingAfiliado(data)
     } else {
       await startUpdateAfiliado(activeAfiliado.persona.id)
     }
@@ -86,18 +83,12 @@ export const Create = () => {
             {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
               <div>
                 <DatosPersonalesData register={register} errors={errors} setValue={setValue} watch={watch} />
-
-                <AfiliadoDomicilioData register={register} setValue={setValue} />
-
-                {/* <InformacionLaboralData register={register} setValue={setValue} watch={watch} /> */}
-
-                <DocumentacionAdicionalData register={register} setValue={setValue} reset={reset} />
               </div>
             )}
 
             <div className='flex justify-end gap-4 mt-8'>
               <div className='ltr:text-right rtl:text-left'>
-                <button className='btn-danger items-center text-center py-2 px-6 rounded-lg' onClick={() => navigate('/afiliados')}>
+                <button className='btn-danger items-center text-center py-2 px-6 rounded-lg' onClick={() => navigate('/alumnos')}>
                   Volver
                 </button>
               </div>

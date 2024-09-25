@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import Icon from '@/components/ui/Icon'
 
-const EstadisticasDashboard = ({ afiliadosSinPaginar, totalUsers, docentesSinPaginar }) => {
+const EstadisticasDashboard = ({ afiliadosSinPaginar, docentesSinPaginar }) => {
   const countAfiliadosPorEstado = (data) => {
     const totals = {
       totales: data.length,
@@ -16,18 +16,11 @@ const EstadisticasDashboard = ({ afiliadosSinPaginar, totalUsers, docentesSinPag
 
   const statistics = [
     {
-      title: 'Afiliados Totales',
+      title: 'Alumnos Totales',
       count: totalsByEstado.totales || 0,
       bg: 'bg-info-500',
       text: 'text-info-500',
       icon: 'heroicons-solid:user-group'
-    },
-    {
-      title: 'Total de Usuarios',
-      count: totalUsers || 0,
-      bg: 'bg-success-500',
-      text: 'text-success-500',
-      icon: 'heroicons-solid:users'
     },
     {
       title: 'Total de Docentes',

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { handleUser, setErrorMessage } from '@/store/user'
 import { handleShowEdit, handleShowModal } from '@/store/layout'
-import { sutepaApi } from '../api'
+import { edjaApi } from '../api'
 
 export const useUserStore = () => {
   const { users, paginate, activeUser } = useSelector(state => state.user)
@@ -11,7 +11,7 @@ export const useUserStore = () => {
 
   const startLoadingUsers = async (page) => {
     try {
-      const response = await sutepaApi.get(`/user?page=${page}`)
+      const response = await edjaApi.get(`/user?page=${page}`)
       const { data, meta } = response.data
       dispatch(handleUser({ data, meta }))
     } catch (error) {
@@ -21,7 +21,7 @@ export const useUserStore = () => {
 
   const startSavingUser = async (form) => {
     try {
-      const response = await sutepaApi.post('/registrar', form)
+      const response = await edjaApi.post('/registrar', form)
       startLoadingUsers()
       dispatch(handleShowModal())
 
@@ -45,7 +45,7 @@ export const useUserStore = () => {
   const startUpdateUser = async (form) => {
     try {
       const id = activeUser.id
-      const response = await sutepaApi.put(`/user/${id}`, form)
+      const response = await edjaApi.put(`/user/${id}`, form)
       const { data } = response.data
       startLoadingUsers()
       dispatch(handleShowEdit())
@@ -70,7 +70,7 @@ export const useUserStore = () => {
   const startDeleteUser = async () => {
     try {
       const id = activeUser.id
-      await sutepaApi.delete(`/user/${id}`)
+      await edjaApi.delete(`/user/${id}`)
       startLoadingUsers()
 
       const message = activeUser.estado === 'ACTIVO' ? 'Usuario dado de baja con éxito' : 'Usuario reactivado con éxito'

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { handleDocente, handleDocenteSinPaginar, setErrorMessage } from '@/store/docente'
 import { handleShowEdit, handleShowModal } from '@/store/layout'
-import { sutepaApi } from '../api'
+import { edjaApi } from '../api'
 import { useState } from 'react'
 
 export const useDocenteStore = () => {
@@ -13,7 +13,7 @@ export const useDocenteStore = () => {
 
   const startLoadingDocente = async (page = 1) => {
     try {
-      const response = await sutepaApi.get(`/agencia?page=${page}`)
+      const response = await edjaApi.get(`/docente?page=${page}`)
       const { data, meta } = response.data
       dispatch(handleDocente({ data, meta }))
       setCurrentPage(page)
@@ -24,7 +24,7 @@ export const useDocenteStore = () => {
 
   const startGetDocenteSinPaginar = async () => {
     try {
-      const response = await sutepaApi.get('/agenciaAll')
+      const response = await edjaApi.get('/docenteAll')
       const { data } = response.data
       dispatch(handleDocenteSinPaginar(data))
     } catch (error) {
@@ -34,7 +34,7 @@ export const useDocenteStore = () => {
 
   const startSavingDocente = async (form) => {
     try {
-      const response = await sutepaApi.post('/agencia', form)
+      const response = await edjaApi.post('/docente', form)
       await startLoadingDocente(currentPage)
       dispatch(handleShowModal())
 
@@ -49,16 +49,16 @@ export const useDocenteStore = () => {
         errorMessage = error.message
       }
 
-      console.error('Error en la actualización de la agencia:', errorMessage)
+      console.error('Error en la actualización de la docente:', errorMessage)
       dispatch(setErrorMessage(errorMessage))
-      toast.error(`No se pudo crear la agencia: ${errorMessage}`)
+      toast.error(`No se pudo crear la docente: ${errorMessage}`)
     }
   }
 
   const startUpdateDocente = async (form) => {
     try {
       const id = activeDocente.id
-      const response = await sutepaApi.put(`/agencia/${id}`, form)
+      const response = await edjaApi.put(`/docente/${id}`, form)
       const { data } = response.data
       await startLoadingDocente(currentPage)
       dispatch(handleShowEdit())
@@ -74,16 +74,16 @@ export const useDocenteStore = () => {
         errorMessage = error.message
       }
 
-      console.error('Error en la actualización de la agencia:', errorMessage)
+      console.error('Error en la actualización de la docente:', errorMessage)
       dispatch(setErrorMessage(errorMessage))
-      toast.error(`No se pudo editar la agencia: ${errorMessage}`)
+      toast.error(`No se pudo editar la docente: ${errorMessage}`)
     }
   }
 
   const startDeleteDocente = async () => {
     try {
       const id = activeDocente.id
-      await sutepaApi.delete(`/agencia/${id}`)
+      await edjaApi.delete(`/docente/${id}`)
       await startLoadingDocente(currentPage)
 
       toast.success('Docente eliminado con exito')
@@ -94,7 +94,7 @@ export const useDocenteStore = () => {
 
   const startSearchDocente = async (search, page = 1) => {
     try {
-      const response = await sutepaApi.get(`/buscar-agencia?query=${search}&page=${page}`)
+      const response = await edjaApi.get(`/buscar-docente?query=${search}&page=${page}`)
       const { data, meta } = response.data
       dispatch(handleDocente({ data, meta }))
     } catch (error) {

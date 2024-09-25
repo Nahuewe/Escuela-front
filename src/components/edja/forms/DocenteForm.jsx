@@ -5,7 +5,6 @@ import * as yup from 'yup'
 import Textinput from '@/components/ui/Textinput'
 import Button from '@/components/ui/Button'
 import Loading from '@/components/Loading'
-import { sutepaApi } from '../../../api'
 
 const FormValidationSaving = yup
   .object({
@@ -21,20 +20,6 @@ const FormValidationUpdate = yup
 
 export const DocenteForm = ({ fnAction, activeDocente = null }) => {
   const [isLoading, setIsLoading] = useState(true)
-  const [isUglLoading, setIsUglLoading] = useState(true)
-  const [ugl, setUgl] = useState([])
-
-  async function handleUgl () {
-    try {
-      const response = await sutepaApi.get('ugl')
-      const { data } = response.data
-      setUgl(data)
-      setIsUglLoading(false)
-    } catch (error) {
-      console.error('Error al obtener UGLs:', error)
-      setIsUglLoading(false)
-    }
-  }
 
   const {
     register,
@@ -46,35 +31,25 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
   })
 
   const onSubmit = async (data) => {
-    await fnAction({
-      ...data,
-      ugl_id: 1
-    })
+    await fnAction(data)
   }
 
   async function loadingInit () {
     if (activeDocente) {
-      setValue('ugl_id', 1)
       setValue('nombre', activeDocente.nombre)
-      setValue('domicilio_trabajo', activeDocente.domicilio_trabajo)
+      setValue('formacion', activeDocente.formacion)
       setValue('telefono_laboral', activeDocente.telefono_laboral)
     }
     setIsLoading(false)
   }
 
   useEffect(() => {
-    handleUgl()
-  }, [])
-
-  useEffect(() => {
-    if (ugl.length > 0) {
-      loadingInit()
-    }
-  }, [ugl, activeDocente])
+    loadingInit()
+  }, [activeDocente])
 
   return (
     <>
-      {isLoading || isUglLoading
+      {isLoading
         ? (
           <Loading />
           )
@@ -83,7 +58,7 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
 
             <div>
               <label htmlFor='nombre' className='form-label space-y-2'>
-                Docente
+                Nombre del Docente
                 <strong className='obligatorio'>(*)</strong>
                 <Textinput
                   name='nombre'
@@ -96,10 +71,10 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
             </div>
 
             <div>
-              <label htmlFor='domicilio_trabajo' className='form-label space-y-2'>
+              <label htmlFor='formacion' className='form-label space-y-2'>
                 Formación Profesional
                 <Textinput
-                  name='domicilio_trabajo'
+                  name='formacion'
                   type='text'
                   placeholder='Formación profesional'
                   register={register}

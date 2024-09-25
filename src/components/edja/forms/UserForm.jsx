@@ -59,7 +59,6 @@ export const UserForm = ({ fnAction, activeUser = null }) => {
   async function loadingInit () {
     const rolesData = await startSelectRoles()
     setRoles(rolesData)
-    setValue('seccional_id', 1)
 
     if (activeUser) {
       Object.entries(activeUser).forEach(([key, value]) => {

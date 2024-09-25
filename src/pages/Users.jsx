@@ -11,7 +11,7 @@ import { setActiveUser } from '@/store/user'
 import Pagination from '@/components/ui/Pagination'
 import Loading from '@/components/Loading'
 import Tooltip from '@/components/ui/Tooltip'
-import { UserForm } from '../components/sutepa/forms/'
+import { UserForm } from '../components/edja/forms/'
 
 const columns = [
   {

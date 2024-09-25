@@ -1,7 +1,5 @@
 export * from './useAuthStore'
 export * from './useUserStore'
-export * from './useSeccionalStore'
-export * from './useLocalidadStore'
 export * from './useDocenteStore'
 export * from './useAfiliadoStore'
 export * from './startGetParameters'

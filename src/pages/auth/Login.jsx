@@ -1,8 +1,8 @@
 import React from 'react'
-import LoginForm from '@/components/sutepa/auth/login-form'
+import LoginForm from '@/components/edja/auth/login-form'
 import { ToastContainer } from 'react-toastify'
-import Illustration from '@/assets/images/auth/portada-sutepa.jpg'
-import LogoEdja from '@/assets/images/logo/logo_edja.png'
+import Illustration from '@/assets/images/auth/portada.jpg'
+import LogoEdja from '@/assets/images/logo/logo-edja.png'
 import Iconos from '@/assets/images/auth/iconos.png'
 
 const Login = () => {

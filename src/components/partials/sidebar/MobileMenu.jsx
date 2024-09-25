@@ -7,7 +7,7 @@ import useDarkMode from '@/hooks/useDarkMode'
 import { Link } from 'react-router-dom'
 import useMobileMenu from '@/hooks/useMobileMenu'
 import Icon from '@/components/ui/Icon'
-import LogoEdja from '@/assets/images/logo/logo_edja.png'
+import LogoEdja from '@/assets/images/logo/logo-edja.png'
 
 const MobileMenu = ({ className = 'custom-class', user }) => {
   const scrollableNodeRef = useRef()
@@ -31,7 +31,7 @@ const MobileMenu = ({ className = 'custom-class', user }) => {
       className={`${className} fixed  top-0 bg-white dark:bg-slate-800 shadow-lg  h-full   w-[248px]`}
     >
       <div className='logo-segment flex justify-between items-center bg-white dark:bg-slate-800 z-[9] h-[85px]  px-4 '>
-        <Link to='/afiliados'>
+        <Link to='/alumnos'>
           <div className='flex items-center space-x-4'>
             <div className='logo-icon'>
               {!isDark && !isSemiDark

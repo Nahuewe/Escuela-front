@@ -1,7 +1,7 @@
 /* eslint-disable no-return-assign */
 import React from 'react'
 import Flatpickr from 'react-flatpickr'
-import 'flatpickr/dist/themes/material_red.css'
+import 'flatpickr/dist/themes/material_blue.css'
 
 const flatpickrOptions = {
   dateFormat: 'd/m/Y',

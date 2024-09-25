@@ -1,0 +1,31 @@
+[
+    {
+        "label": "Apellido",
+        "field": "apellido"
+    },
+    {
+        "label": "Nombre",
+        "field": "nombre"
+    },
+    {
+        "label": "DNI",
+        "field": "dni"
+    },
+    {
+        "label": "Teléfono",
+        "field": "telefono"
+    },
+    {
+        "label": "Formación Profesional",
+        "field": "formacion"
+    },
+    {
+        "label": "Estado",
+        "field": "estado",
+        "Cell": "function({ cell }) { return (<span className='block w-full'><span className={`inline-block px-3 min-w-[90px] text-center mx-auto py-1 rounded-[999px] bg-opacity-25 text-black ${cell.value === 'PENDIENTE' ? 'text-warning-500 bg-warning-500 dark:text-warning-500 dark:bg-warning-500' : cell.value === 'ACTIVO' ? 'text-success-500 bg-success-500 dark:text-success-500 dark:bg-success-500' : 'text-red-500 bg-red-500 dark:text-red-500 dark:bg-red-500'}`}>{cell.value}</span></span>); }"
+    },
+    {
+        "label": "Acciones",
+        "field": "acciones"
+    }
+]

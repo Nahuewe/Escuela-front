@@ -18,7 +18,9 @@ export const SelectForm = ({ register, title, options = [], error = null, disabl
         <option value='' hidden>Seleccione una opción</option>
         {
           options.map(op => (
-            <option key={op.id} value={op.id}>{op.nombre}</option>
+            <option key={op.id} value={op.id}>
+              {op.formacion ? op.formacion : op.nombre}
+            </option>
           ))
         }
       </select>

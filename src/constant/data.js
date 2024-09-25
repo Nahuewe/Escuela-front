@@ -13,7 +13,7 @@ export const menuItems = [
   {
     title: 'Alumnos',
     icon: 'heroicons-outline:user-plus',
-    link: 'afiliados'
+    link: 'alumnos'
   },
   {
     title: 'Docentes',
@@ -44,9 +44,9 @@ export const menuNormal = [
   },
 
   {
-    title: 'Afiliados',
+    title: 'Alumnos',
     icon: 'heroicons-outline:user-plus',
-    link: 'afiliados'
+    link: 'alumnos'
   },
   {
     title: 'Docentes',

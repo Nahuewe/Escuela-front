@@ -1,7 +1,7 @@
 import React, { lazy, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from './helpers/useAuthStore'
-import { Seccionales, Users, Localidades, Docentes } from './pages'
+import { Users, Docentes } from './pages'
 import { Create, Afiliado, ShowAfiliado } from './pages/afiliados'
 import Layout from './layout/Layout'
 import Login from './pages/auth/Login'
@@ -36,23 +36,21 @@ function App () {
               )
             : (
               <>
-                <Route path='/' element={<Navigate to='/afiliados' />} />
+                <Route path='/' element={<Navigate to='/alumnos' />} />
 
                 <Route path='/*' element={<Layout />}>
                   <Route path='dashboard' element={<Dashboard />} />
                   <Route path='*' element={<Navigate to='/404' />} />
 
-                  {/* Nuevas Rutas */}
-                  <Route path='usuarios' element={<Users />} />
-                  <Route path='seccionales' element={<Seccionales />} />
-                  <Route path='localidades' element={<Localidades />} />
-                  <Route path='docentes' element={<Docentes />} />
+                  {/* Alumnos */}
+                  <Route path='alumnos' element={<Afiliado />} />
+                  <Route path='alumnos/crear' element={<Create />} />
+                  <Route path='alumnos/editar/:id' element={<Create />} />
+                  <Route path='alumnos/ver/:id' element={<ShowAfiliado />} />
 
-                  {/* Afiliados */}
-                  <Route path='afiliados' element={<Afiliado />} />
-                  <Route path='afiliados/crear' element={<Create />} />
-                  <Route path='afiliados/editar/:id' element={<Create />} />
-                  <Route path='afiliados/ver/:id' element={<ShowAfiliado />} />
+                  {/* Nuevas Rutas */}
+                  <Route path='docentes' element={<Docentes />} />
+                  <Route path='usuarios' element={<Users />} />
                 </Route>
 
                 <Route path='/404' element={<Error />} />

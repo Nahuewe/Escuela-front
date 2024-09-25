@@ -1,4 +1,4 @@
-import { sutepaApi } from '../api'
+import { edjaApi } from '../api'
 
 export const useGetParameters = () => {
   const formatObject = (data) => {
@@ -13,18 +13,7 @@ export const useGetParameters = () => {
 
   const startSelectRoles = async () => {
     try {
-      const response = await sutepaApi.get('/roles')
-      const { data } = response.data
-
-      return formatObject(data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const startSelectSeccionales = async () => {
-    try {
-      const response = await sutepaApi.get('/seccionalAll')
+      const response = await edjaApi.get('/roles')
       const { data } = response.data
 
       return formatObject(data)
@@ -34,7 +23,6 @@ export const useGetParameters = () => {
   }
 
   return {
-    startSelectRoles,
-    startSelectSeccionales
+    startSelectRoles
   }
 }

@@ -33,7 +33,7 @@ const Navmenu = ({ menus }) => {
         }
       }
     })
-    document.title = `${locationName} | SUTEPA`
+    document.title = `${locationName} | EDJA N°4`
 
     setActiveSubmenu(submenuIndex)
   }, [location])

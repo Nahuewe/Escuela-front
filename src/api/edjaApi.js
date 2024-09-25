@@ -1,11 +1,10 @@
 import axios from 'axios'
 
-const sutepaApi = axios.create({
+const edjaApi = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}`
-  // baseURL: 'https://sistema.sutepa.com.ar/api'
 })
 
-sutepaApi.interceptors.request.use(config => {
+edjaApi.interceptors.request.use(config => {
   config.headers = {
     ...config.headers,
     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -14,4 +13,4 @@ sutepaApi.interceptors.request.use(config => {
   return config
 })
 
-export default sutepaApi
+export default edjaApi

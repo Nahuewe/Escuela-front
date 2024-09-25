@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { handleLogin, handleLogout, onChecking, setErrorMessage } from '@/store/auth'
-import { sutepaApi } from '../api'
+import { edjaApi } from '../api'
 
 export const useAuthStore = () => {
   const { status, user } = useSelector(state => state.auth)
@@ -11,7 +11,7 @@ export const useAuthStore = () => {
     dispatch(onChecking())
 
     try {
-      const { data: { token, user } } = await sutepaApi.post('/login', { username, password })
+      const { data: { token, user } } = await edjaApi.post('/login', { username, password })
 
       if (user) {
         localStorage.setItem('token', token)
@@ -41,7 +41,7 @@ export const useAuthStore = () => {
     if (!token) return dispatch(handleLogout())
 
     try {
-      const { data: { token, user } } = await sutepaApi.post('/refresh-token')
+      const { data: { token, user } } = await edjaApi.post('/refresh-token')
       localStorage.setItem('token', token)
       dispatch(handleLogin({ ...user }))
     } catch (error) {

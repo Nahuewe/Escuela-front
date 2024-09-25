@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import useDarkMode from '@/hooks/useDarkMode'
 import useSemiDark from '@/hooks/useSemiDark'
 import useSkin from '@/hooks/useSkin'
-import LogoEdja from '@/assets/images/logo/logo_edja.png'
+import LogoEdja from '@/assets/images/logo/logo-edja.png'
 
 const SidebarLogo = ({ menuHover }) => {
   const [isDark] = useDarkMode()
@@ -23,7 +23,7 @@ const SidebarLogo = ({ menuHover }) => {
       
       `}
     >
-      <Link to='/afiliados'>
+      <Link to='/alumnos'>
         <div className='flex items-center space-x-4'>
           <div className='logo-icon'>
             {!isDark && !isSemiDark

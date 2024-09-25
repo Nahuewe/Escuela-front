@@ -11,17 +11,17 @@ import Loading from '@/components/Loading'
 import Tooltip from '@/components/ui/Tooltip'
 import { useDocenteStore } from '@/helpers'
 import { setActiveDocente } from '../store/docente'
-import { DocenteForm } from '../components/sutepa/forms'
+import { DocenteForm } from '../components/edja/forms'
 import { TextInput } from 'flowbite-react'
 
 const columns = [
   {
     label: 'Docente',
-    field: 'agencia'
+    field: 'docente'
   },
   {
     label: 'Formación Profesional',
-    field: 'domicilio_trabajo'
+    field: 'formacion'
   },
   {
     label: 'Teléfono Laboral',
@@ -152,16 +152,16 @@ export const Docentes = () => {
                         <tbody className='bg-white divide-y divide-slate-100 dark:bg-slate-800 dark:divide-slate-700'>
                           {
                             (docentes && docentes.length > 0)
-                              ? (docentes.map((agencia) => (
-                                <tr key={agencia.id}>
-                                  <td className='table-td'>{agencia.nombre}</td>
-                                  <td className='table-td'>{agencia.domicilio_trabajo}</td>
-                                  <td className='table-td'>{agencia.telefono_laboral}</td>
+                              ? (docentes.map((docente) => (
+                                <tr key={docente.id}>
+                                  <td className='table-td'>{docente.nombre}</td>
+                                  <td className='table-td'>{docente.formacion}</td>
+                                  <td className='table-td'>{docente.telefono_laboral}</td>
                                   <td className='table-td flex justify-start gap-2'>
                                     <Tooltip content='Editar' placement='top' arrow animation='shift-away'>
                                       <button
                                         className='bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-700'
-                                        onClick={() => onEdit(agencia.id)}
+                                        onClick={() => onEdit(docente.id)}
                                       >
                                         <svg
                                           xmlns='http://www.w3.org/2000/svg'
@@ -185,7 +185,7 @@ export const Docentes = () => {
                                     <Tooltip content='Eliminar' placement='top' arrow animation='shift-away'>
                                       <button
                                         className='bg-red-500 text-white p-2 rounded-lg hover:bg-red-700'
-                                        onClick={() => onDelete(agencia.id)}
+                                        onClick={() => onDelete(docente.id)}
                                       >
                                         <svg
                                           xmlns='http://www.w3.org/2000/svg'
