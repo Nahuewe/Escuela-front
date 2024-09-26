@@ -14,17 +14,17 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
 
   useEffect(() => {
     if (afiliadosSinPaginar) {
-      const seccionales = {}
+      const formaciones = {}
 
       afiliadosSinPaginar.forEach(afiliado => {
-        const seccional = afiliado.seccional || 'Seccional no Asignada'
-        seccionales[seccional] = (seccionales[seccional] || 0) + 1
+        const formacion = afiliado.formacion || 'Formación no Asignada'
+        formaciones[formacion] = (formaciones[formacion] || 0) + 1
       })
 
       const totalAfiliados = afiliadosSinPaginar.length
-      const seriesData = Object.keys(seccionales).map(seccional => ({
-        name: seccional,
-        data: [(seccionales[seccional] / totalAfiliados) * 100]
+      const seriesData = Object.keys(formaciones).map(formacion => ({
+        name: formacion,
+        data: [(formaciones[formacion] / totalAfiliados) * 100]
       }))
 
       setSeries(seriesData)
@@ -46,7 +46,7 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
       }
     },
     title: {
-      text: 'Porcentaje de Afiliados Por Seccional',
+      text: 'Porcentaje de Alumnos Por Formación',
       align: 'left',
       offsetX: isRtl ? '0%' : 0,
       offsetY: 13,
@@ -76,7 +76,7 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
       }
     },
     xaxis: {
-      categories: ['Porcentaje de Afiliados'],
+      categories: ['Porcentaje de Formaciones'],
       labels: {
         style: {
           colors: isDark ? '#CBD5E1' : '#475569',
@@ -144,7 +144,7 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
       htmlToImage.toPng(chartRef.current)
         .then(function (dataUrl) {
           const link = document.createElement('a')
-          link.download = 'PorcentajeAfiliadosPorSeccional.png'
+          link.download = 'PorcentajeAfiliadosPorFormacion.png'
           link.href = dataUrl
           link.click()
         })
@@ -158,7 +158,7 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
       </div>
       <div ref={chartRef}>
         <Chart options={options} series={series} type='bar' height={height} />
-        <div className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} style={{ textAlign: 'center', marginTop: '10px' }}>Total de Afiliados: {totalData}</div>
+        <div className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} style={{ textAlign: 'center', marginTop: '10px' }}>Total de Formaciones: {totalData}</div>
       </div>
     </Card>
   )

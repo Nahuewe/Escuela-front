@@ -13,25 +13,9 @@ import { useDocenteStore } from '@/helpers'
 import { setActiveDocente } from '../store/docente'
 import { DocenteForm } from '../components/edja/forms'
 import { TextInput } from 'flowbite-react'
-
-const columns = [
-  {
-    label: 'Docente',
-    field: 'docente'
-  },
-  {
-    label: 'Formación Profesional',
-    field: 'formacion'
-  },
-  {
-    label: 'Teléfono Laboral',
-    field: 'telefono_laboral'
-  },
-  {
-    label: 'Acciones',
-    field: 'acciones'
-  }
-]
+import { formatDate } from '@/constant/datos-id'
+import columnDocente from '@/json/columnDocente'
+import { getTipoSituacion } from '../constant/datos-id'
 
 export const Docentes = () => {
   const { docentes, paginate, activeDocente, startLoadingDocente, startSavingDocente, startDeleteDocente, startUpdateDocente, startSearchDocente } = useDocenteStore()
@@ -99,6 +83,7 @@ export const Docentes = () => {
                           </svg>
                         </div>
                       </div>
+
                       <Modal
                         title='Agregar Docente'
                         label='Agregar'
@@ -142,7 +127,7 @@ export const Docentes = () => {
                       <table className='min-w-full divide-y divide-slate-100 table-fixed dark:divide-slate-700'>
                         <thead className='bg-slate-200 dark:bg-slate-700'>
                           <tr>
-                            {columns.map((column, i) => (
+                            {columnDocente.map((column, i) => (
                               <th key={i} scope='col' className='table-th'>
                                 {column.label}
                               </th>
@@ -155,8 +140,14 @@ export const Docentes = () => {
                               ? (docentes.map((docente) => (
                                 <tr key={docente.id}>
                                   <td className='table-td'>{docente.nombre}</td>
+                                  <td className='table-td'>{docente.dni}</td>
+                                  <td className='table-td'>{formatDate(docente.fecha_nacimiento)}</td>
+                                  <td className='table-td'>{docente.domicilio}</td>
                                   <td className='table-td'>{docente.formacion}</td>
-                                  <td className='table-td'>{docente.telefono_laboral}</td>
+                                  <td className='table-td'>{formatDate(docente.fecha_docencia)}</td>
+                                  <td className='table-td'>{formatDate(docente.fecha_cargo)}</td>
+                                  <td className='table-td'>{getTipoSituacion(docente.situacion)}</td>
+                                  <td className='table-td'>{docente.telefono}</td>
                                   <td className='table-td flex justify-start gap-2'>
                                     <Tooltip content='Editar' placement='top' arrow animation='shift-away'>
                                       <button

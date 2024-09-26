@@ -5,14 +5,14 @@ import { updatePersona } from '@/store/afiliado'
 import Card from '@/components/ui/Card'
 import Textinput from '@/components/ui/Textinput'
 import Numberinput from '@/components/ui/Numberinput'
-import DatePicker from '../ui/DatePicker'
+import DatePicker from '@/components/ui/DatePicker'
 import moment from 'moment'
 import useFetchData from '@/helpers/useFetchData'
 import Loading from '@/components/Loading'
 
 const becas = [
-  { id: 'si', nombre: 'Sí' },
-  { id: 'no', nombre: 'No' }
+  { id: 1, nombre: 'Sí' },
+  { id: 2, nombre: 'No' }
 ]
 
 const initialForm = {
@@ -33,12 +33,14 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
   const [, setFormData] = useState(initialForm)
 
   const handleDateChange = (date, field) => {
-    if (field === 'fecha_cursado') {
+    const formattedDate = new Date(date).toLocaleDateString('en-CA')
+
+    if (field === 'fecha_nacimiento') {
       setPicker(date)
-      setValue(field, date)
-    } else if (field === 'fecha_nacimiento') {
+      setValue(field, formattedDate)
+    } else if (field === 'fecha_cursado') {
       setPicker2(date)
-      setValue(field, date)
+      setValue(field, formattedDate)
     }
   }
 
@@ -86,15 +88,16 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
   useEffect(() => {
     if (activeAfiliado) {
       const { persona } = activeAfiliado
-      const fechaCursado = persona.fecha_cursado ? moment(persona.fecha_cursado, 'YYYY-MM-DD').toDate() : null
       const fechaNacimiento = persona.fecha_nacimiento ? moment(persona.fecha_nacimiento, 'YYYY-MM-DD').toDate() : null
+      const fechaCursado = persona.fecha_cursado ? moment(persona.fecha_cursado, 'YYYY-MM-DD').toDate() : null
 
+      setDni(persona.dni)
       setTelefono(persona.telefono || '')
       setEdad(persona.edad || '')
 
       // Actualización de los pickers de fecha
-      setPicker(fechaCursado ? [fechaCursado] : [])
-      setPicker2(fechaNacimiento ? [fechaNacimiento] : [])
+      setPicker(fechaNacimiento ? [fechaNacimiento] : [])
+      setPicker2(fechaCursado ? [fechaCursado] : [])
 
       setFormData({
         sexo_id: persona.sexo_id || null
@@ -111,8 +114,8 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
       apellido: watch('apellido'),
       nombre: watch('nombre'),
       dni: dni || watch('dni'),
-      fecha_cursado: picker ? moment(picker[0]).format('YYYY-MM-DD') : null,
-      fecha_nacimiento: picker2 ? moment(picker2[0]).format('YYYY-MM-DD') : null,
+      fecha_nacimiento: picker ? moment(picker[0]).format('YYYY-MM-DD') : null,
+      fecha_cursado: picker2 && picker2.length > 0 ? moment(picker2[0]).format('YYYY-MM-DD') : null,
       edad: edad || watch('edad'),
       sexo_id: parseInt(watch('sexo_id')) || null,
       telefono: telefono || watch('telefono'),
@@ -120,7 +123,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
       ocupacion: watch('ocupacion'),
       enfermedad: watch('enfermedad'),
       becas: watch('becas'),
-      formacion: parseInt(watch('formacion')) || null,
+      formacion_id: parseInt(watch('formacion_id')) || null,
       observacion: watch('observacion')
     }
 
@@ -198,7 +201,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     Fecha de Nacimiento
                   </label>
                   <DatePicker
-                    value={picker2}
+                    value={picker}
                     id='fecha_nacimiento'
                     placeholder='Seleccione la fecha de nacimiento'
                     onChange={(date) => handleDateChange(date, 'fecha_nacimiento')}
@@ -211,7 +214,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     Fecha de Cursado
                   </label>
                   <DatePicker
-                    value={picker}
+                    value={picker2}
                     id='fecha_cursado'
                     placeholder='Seleccione la fecha de Cursado'
                     onChange={(date) => handleDateChange(date, 'fecha_cursado')}
@@ -299,10 +302,10 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                 </div>
 
                 <SelectForm
-                  register={register('formacion')}
+                  register={register('formacion_id')}
                   title='Formación Profesional'
                   options={formacion}
-                  onChange={(e) => handleSelectChange('formacion', e)}
+                  onChange={(e) => handleSelectChange('formacion_id', e)}
                 />
 
                 <div>

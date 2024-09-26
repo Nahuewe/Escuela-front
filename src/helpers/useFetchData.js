@@ -13,7 +13,7 @@ const useFetchData = () => {
           formacionResponse
         ] = await Promise.all([
           edjaApi.get('sexo'),
-          edjaApi.get('docente')
+          edjaApi.get('docenteAll')
         ])
 
         setSexo(sexoResponse.data.data)

@@ -1,14 +1,17 @@
-export const tipoContrato = {
-  1: 'PLANTA PERMANENTE',
-  2: 'CONTRATADO'
+export const tipoBeca = {
+  1: 'Sí',
+  2: 'No'
+}
+
+export const tipoSituacion = {
+  1: 'Titular',
+  2: 'Suplente',
+  3: 'Interino'
 }
 
 export const tipoRoles = {
   1: 'ADMINISTRADOR',
-  2: 'SECCIONAL',
-  3: 'AFILIACIÓN',
-  4: 'SUBSIDIOS',
-  5: 'SOLO LECTURA'
+  2: 'CARGA'
 }
 
 export const formatDate = (dateString) => {
@@ -29,10 +32,14 @@ export const formatDate = (dateString) => {
   return adjustedDate.toLocaleDateString(undefined, options)
 }
 
-export const getTipoContrato = (id) => {
-  return tipoContrato[id] || ''
-}
-
 export const getTipoRoles = (id) => {
   return tipoRoles[id] || ''
+}
+
+export const getTipoSituacion = (id) => {
+  return tipoSituacion[id] || ''
+}
+
+export const getTipoBeca = (id) => {
+  return tipoBeca[id] || ''
 }

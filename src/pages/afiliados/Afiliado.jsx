@@ -111,7 +111,7 @@ export const Afiliado = () => {
                     <DeleteModal
                       themeClass='bg-slate-900 dark:bg-slate-800 dark:border-b dark:border-slate-700'
                       centered
-                      title='Acciones del Afiliado'
+                      title='Acciones del Alumno'
                       message='¿Estás seguro?'
                       labelBtn='Aceptar'
                       btnFunction={startDeleteAfiliado}
@@ -151,8 +151,8 @@ export const Afiliado = () => {
                             (filteredAfiliados.length > 0)
                               ? (filteredAfiliados.map((afiliado) => (
                                 <tr key={afiliado.id}>
-                                  <td className='table-td mayuscula'>{afiliado.apellido}</td>
-                                  <td className='table-td mayuscula'>{afiliado.nombre}</td>
+                                  <td className='table-td'>{afiliado.apellido}</td>
+                                  <td className='table-td'>{afiliado.nombre}</td>
                                   <td className='table-td'>{afiliado.dni}</td>
                                   <td className='table-td'>{afiliado.telefono}</td>
                                   <td className='table-td'>{afiliado.formacion}</td>

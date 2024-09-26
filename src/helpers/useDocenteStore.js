@@ -63,7 +63,7 @@ export const useDocenteStore = () => {
       await startLoadingDocente(currentPage)
       dispatch(handleShowEdit())
 
-      toast.success('Docente actualizado con exito')
+      toast.info('Docente actualizado con exito')
     } catch (error) {
       let errorMessage = 'Error desconocido'
       if (error.response && error.response.data && error.response.data.errors) {

@@ -50,10 +50,7 @@ export const UserForm = ({ fnAction, activeUser = null }) => {
   })
 
   const onSubmit = async (data) => {
-    await fnAction({
-      ...data,
-      seccional_id: 1
-    })
+    await fnAction(data)
   }
 
   async function loadingInit () {

@@ -35,7 +35,7 @@ export const Create = () => {
 
   const onSubmit = async (data) => {
     if (!activeAfiliado) {
-      // await startSavingAfiliado(data)
+      await startSavingAfiliado(data)
     } else {
       await startUpdateAfiliado(activeAfiliado.persona.id)
     }

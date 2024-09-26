@@ -31,6 +31,10 @@ const columns = [
     field: 'correo'
   },
   {
+    label: 'Teléfono',
+    field: 'telefono'
+  },
+  {
     label: 'Rol',
     field: 'roles'
   },
@@ -141,6 +145,7 @@ export const Users = () => {
                               <td className='table-td'>{usuario.apellido}</td>
                               <td className='table-td'>{usuario.user}</td>
                               <td className='table-td'>{usuario.correo}</td>
+                              <td className='table-td'>{usuario.telefono}</td>
                               <td className='table-td'>{usuario.rol}</td>
                               <td className='table-td'>
                                 <span

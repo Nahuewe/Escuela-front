@@ -25,16 +25,6 @@ export const menuItems = [
     icon: 'heroicons-outline:users',
     link: 'usuarios'
   }
-  // {
-  //   title: 'Seccionales',
-  //   icon: 'heroicons-outline:building-office',
-  //   link: 'seccionales'
-  // },
-  // {
-  //   title: 'Localidades',
-  //   icon: 'heroicons-outline:identification',
-  //   link: 'localidades'
-  // }
 ]
 
 export const menuNormal = [

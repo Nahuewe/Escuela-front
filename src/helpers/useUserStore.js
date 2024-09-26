@@ -50,7 +50,7 @@ export const useUserStore = () => {
       startLoadingUsers()
       dispatch(handleShowEdit())
 
-      toast.success('Usuario actualizado con exito')
+      toast.info('Usuario actualizado con exito')
     } catch (error) {
       let errorMessage = 'Error desconocido'
       if (error.response && error.response.data && error.response.data.errors) {
