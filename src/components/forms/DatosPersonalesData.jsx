@@ -7,8 +7,8 @@ import Textinput from '@/components/ui/Textinput'
 import Numberinput from '@/components/ui/Numberinput'
 import DatePicker from '@/components/ui/DatePicker'
 import moment from 'moment'
-import useFetchData from '@/helpers/useFetchData'
 import Loading from '@/components/Loading'
+import { edjaApi } from '../../api'
 
 const becas = [
   { id: 1, nombre: 'Sí' },
@@ -22,24 +22,26 @@ const initialForm = {
 function DatosPersonalesData ({ register, setValue, errors, watch }) {
   const dispatch = useDispatch()
   const { activeAfiliado } = useSelector(state => state.afiliado)
-  const { sexo, formacion } = useFetchData()
+  const [sexo, setSexo] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [picker, setPicker] = useState(null)
-  const [picker2, setPicker2] = useState(null)
   const [dni, setDni] = useState('')
   const [telefono, setTelefono] = useState('')
   const [edad, setEdad] = useState('')
   const [, setInput] = useState('')
   const [, setFormData] = useState(initialForm)
 
+  async function handleSexo () {
+    const response = await edjaApi.get('sexo')
+    const { data } = response.data
+    setSexo(data)
+  }
+
   const handleDateChange = (date, field) => {
     const formattedDate = new Date(date).toLocaleDateString('en-CA')
 
     if (field === 'fecha_nacimiento') {
       setPicker(date)
-      setValue(field, formattedDate)
-    } else if (field === 'fecha_cursado') {
-      setPicker2(date)
       setValue(field, formattedDate)
     }
   }
@@ -89,7 +91,6 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
     if (activeAfiliado) {
       const { persona } = activeAfiliado
       const fechaNacimiento = persona.fecha_nacimiento ? moment(persona.fecha_nacimiento, 'YYYY-MM-DD').toDate() : null
-      const fechaCursado = persona.fecha_cursado ? moment(persona.fecha_cursado, 'YYYY-MM-DD').toDate() : null
 
       setDni(persona.dni)
       setTelefono(persona.telefono || '')
@@ -97,7 +98,6 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
 
       // Actualización de los pickers de fecha
       setPicker(fechaNacimiento ? [fechaNacimiento] : [])
-      setPicker2(fechaCursado ? [fechaCursado] : [])
 
       setFormData({
         sexo_id: persona.sexo_id || null
@@ -115,7 +115,6 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
       nombre: watch('nombre'),
       dni: dni || watch('dni'),
       fecha_nacimiento: picker ? moment(picker[0]).format('YYYY-MM-DD') : null,
-      fecha_cursado: picker2 && picker2.length > 0 ? moment(picker2[0]).format('YYYY-MM-DD') : null,
       edad: edad || watch('edad'),
       sexo_id: parseInt(watch('sexo_id')) || null,
       telefono: telefono || watch('telefono'),
@@ -123,18 +122,22 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
       ocupacion: watch('ocupacion'),
       enfermedad: watch('enfermedad'),
       becas: watch('becas'),
-      formacion_id: parseInt(watch('formacion_id')) || null,
       observacion: watch('observacion')
     }
 
     dispatch(updatePersona(personaData))
-  }, [picker, picker2, dni, telefono, edad, watch('apellido'), watch('nombre'), watch('domicilio'), watch('ocupacion'), watch('enfermedad'), watch('becas'), watch('formacion'), watch('observacion'), dispatch])
+  }, [picker, dni, telefono, edad, watch('apellido'), watch('nombre'), watch('domicilio'), watch('ocupacion'), watch('enfermedad'), watch('becas'), watch('formacion'), watch('observacion'), dispatch])
+
+  async function loadingSexo () {
+    !isLoading && setIsLoading(true)
+
+    await handleSexo()
+    setIsLoading(false)
+  }
 
   useEffect(() => {
-    if (sexo.length || formacion.length) {
-      setIsLoading(false)
-    }
-  }, [sexo, formacion])
+    loadingSexo()
+  }, [])
 
   return (
     <>
@@ -207,19 +210,6 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     onChange={(date) => handleDateChange(date, 'fecha_nacimiento')}
                   />
                   <input type='hidden' {...register('fecha_nacimiento')} />
-                </div>
-
-                <div>
-                  <label htmlFor='default-picker' className='form-label'>
-                    Fecha de Cursado
-                  </label>
-                  <DatePicker
-                    value={picker2}
-                    id='fecha_cursado'
-                    placeholder='Seleccione la fecha de Cursado'
-                    onChange={(date) => handleDateChange(date, 'fecha_cursado')}
-                  />
-                  <input type='hidden' {...register('fecha_cursado')} />
                 </div>
 
                 <Numberinput
@@ -300,13 +290,6 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     options={becas}
                   />
                 </div>
-
-                <SelectForm
-                  register={register('formacion_id')}
-                  title='Formación Profesional'
-                  options={formacion}
-                  onChange={(e) => handleSelectChange('formacion_id', e)}
-                />
 
                 <div>
                   <label htmlFor='default-picker' className='form-label'>

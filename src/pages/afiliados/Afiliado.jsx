@@ -13,6 +13,7 @@ import EditButton from '@/components/buttons/EditButton'
 import ViewButton from '@/components/buttons/ViewButton'
 import AfiliadoButton from '@/components/buttons/AfiliadoButton'
 import columnAfiliado from '@/json/columnAfiliado'
+import { useDocenteStore } from '../../helpers/useDocenteStore'
 
 export const Afiliado = () => {
   const navigate = useNavigate()
@@ -29,6 +30,8 @@ export const Afiliado = () => {
     startDeleteAfiliado,
     startSearchAfiliado
   } = useAfiliadoStore()
+
+  const { docentesSinPaginar, startGetDocenteSinPaginar } = useDocenteStore()
 
   const filteredAfiliados = (user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) ? afiliados : afiliados.filter(afiliado => afiliado.seccional_id === user.seccional_id)
 
@@ -65,6 +68,11 @@ export const Afiliado = () => {
     await startSearchAfiliado(value)
   }
 
+  const getFormacionName = (formacionId) => {
+    const docente = docentesSinPaginar.find(docente => docente.id === formacionId)
+    return docente ? docente.formacion : '-'
+  }
+
   async function loadingAfiliado (page = 1) {
     !isLoading && setIsLoading(true)
     await startLoadingAfiliado(page)
@@ -75,6 +83,7 @@ export const Afiliado = () => {
     const searchParams = new URLSearchParams(window.location.search)
     const page = searchParams.get('page') || 1
     loadingAfiliado(page)
+    startGetDocenteSinPaginar()
   }, [])
 
   return (
@@ -154,8 +163,8 @@ export const Afiliado = () => {
                                   <td className='table-td'>{afiliado.apellido}</td>
                                   <td className='table-td'>{afiliado.nombre}</td>
                                   <td className='table-td'>{afiliado.dni}</td>
-                                  <td className='table-td'>{afiliado.telefono}</td>
-                                  <td className='table-td'>{afiliado.formacion}</td>
+                                  <td className='table-td'>{afiliado.telefono || '-'}</td>
+                                  <td className='table-td'>{getFormacionName(afiliado.formacion[0] || '-')}</td>
                                   <td className='table-td'>
                                     <span
                                       className={`inline-block text-black px-3 min-w-[90px] text-center py-1 rounded-full bg-opacity-25 ${afiliado.estado === 'ACTIVO'

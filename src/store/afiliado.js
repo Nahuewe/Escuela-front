@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
   afiliados: [],
   afiliadosSinPaginar: [],
+  formacion: [],
   persona: {},
   paginate: null,
   activeAfiliado: null,
@@ -39,6 +40,17 @@ export const afiliadoSlice = createSlice({
         return afiliado
       })
     },
+    onAddOrUpdateFormacion: (state, { payload }) => {
+      const index = state.formacion.findIndex((formacion) => formacion.id === payload.id)
+      if (index !== -1) {
+        state.formacion[index] = payload
+      } else {
+        state.formacion.push(payload)
+      }
+    },
+    onDeleteFormacion: (state, { payload }) => {
+      state.formacion = state.formacion.filter((formacion) => formacion.id !== payload)
+    },
     onDeleteAfiliado: (state, { payload }) => {
       state.afiliados = state.afiliados.filter((afiliado) => afiliado.id !== payload.id)
     },
@@ -50,6 +62,7 @@ export const afiliadoSlice = createSlice({
     },
     cleanAfiliado: (state) => {
       state.persona = {}
+      state.formacion = []
     },
     setErrorMessage: (state, { payload }) => {
       state.errorMessage = payload
@@ -61,6 +74,8 @@ export const {
   handleAfiliado,
   handleAfiliadosSinPaginar,
   setActiveAfiliado,
+  onAddOrUpdateFormacion,
+  onDeleteFormacion,
   onUpdateAfiliado,
   onDeleteAfiliado,
   onShowAfiliado,

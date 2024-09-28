@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 export const useAfiliadoStore = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { afiliados, afiliadosSinPaginar, paginate, activeAfiliado, persona } = useSelector(state => state.afiliado)
+  const { afiliados, formacion, afiliadosSinPaginar, paginate, activeAfiliado, persona } = useSelector(state => state.afiliado)
 
   const startLoadingAfiliado = async (page) => {
     try {
@@ -33,7 +33,8 @@ export const useAfiliadoStore = () => {
   const startSavingAfiliado = async () => {
     try {
       const afiliado = {
-        persona
+        persona,
+        formacion
       }
 
       const response = await edjaApi.post('/personas', afiliado)
@@ -74,7 +75,8 @@ export const useAfiliadoStore = () => {
   const startUpdateAfiliado = async (id) => {
     try {
       const afiliado = {
-        persona
+        persona,
+        formacion
       }
 
       const response = await edjaApi.put(`/personas/${id}`, afiliado)

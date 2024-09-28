@@ -32,7 +32,7 @@ const AfiliadoButton = ({ afiliado, onDelete }) => {
       return (
         <Tooltip content='Reactivar' placement='top' arrow animation='shift-away'>
           <button
-            className='bg-warning-500 text-white p-2 rounded-lg hover:bg-warning-700'
+            className='bg-green-500 text-white p-2 rounded-lg hover:bg-green-700'
             onClick={() => onDelete(afiliado.id)}
           >
             <svg

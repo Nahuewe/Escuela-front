@@ -33,9 +33,6 @@ export const ShowAfiliado = () => {
                 <strong>Fecha de Nacimiento:</strong> {formatDate(activeAfiliado.persona.fecha_nacimiento) || '-'}
               </div>
               <div className='border-b py-2 px-4'>
-                <strong>Fecha de inicio del Cursado:</strong> {formatDate(activeAfiliado.persona.fecha_cursado) || '-'}
-              </div>
-              <div className='border-b py-2 px-4'>
                 <strong>Edad de Ingreso:</strong> {activeAfiliado.persona.edad || '-'}
               </div>
               <div className='border-b py-2 px-4'>
@@ -57,11 +54,38 @@ export const ShowAfiliado = () => {
                 <strong>Becas:</strong> {getTipoBeca(activeAfiliado.persona.becas || '-')}
               </div>
               <div className='border-b py-2 px-4'>
-                <strong>Formacion Profesional:</strong> {activeAfiliado.persona.formacion || '-'}
-              </div>
-              <div className='border-b py-2 px-4'>
                 <strong>Observaciones:</strong> {activeAfiliado.persona.observacion || '-'}
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeAfiliado.formacion && activeAfiliado.formacion.length > 0 && (
+          <div>
+            <h4 className='card-title text-center bg-red-500 dark:bg-gray-600 text-white rounded-md p-2'>
+              Formación Profesional
+            </h4>
+            <div className='overflow-x-auto mt-4'>
+              <table className='table-auto w-full'>
+                <thead className='bg-gray-300 dark:bg-gray-700'>
+                  <tr>
+                    <th className='px-4 py-2 text-center dark:text-white'>Tipo de Formacion</th>
+                    <th className='px-4 py-2 text-center dark:text-white'>Fecha de Cursado</th>
+                    <th className='px-4 py-2 text-center dark:text-white'>Fecha de Finalizacion</th>
+                    <th className='px-4 py-2 text-center dark:text-white'>Observaciones</th>
+                  </tr>
+                </thead>
+                <tbody className='divide-y dark:divide-gray-700'>
+                  {activeAfiliado.formacion.map(formacion => (
+                    <tr key={formacion.id} className='bg-white dark:bg-gray-800 dark:border-gray-700'>
+                      <td className='px-4 py-2 text-center dark:text-white'>{formacion.formacion}</td>
+                      <td className='px-4 py-2 text-center dark:text-white'>{formatDate(formacion.fecha_cursado)}</td>
+                      <td className='px-4 py-2 text-center dark:text-white'>{formatDate(formacion.fecha_finalizacion)}</td>
+                      <td className='px-4 py-2 text-center dark:text-white'>{formacion.observaciones}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}

@@ -8,6 +8,7 @@ import * as yup from 'yup'
 import DatosPersonalesData from '@/components/forms/DatosPersonalesData'
 import Loading from '@/components/Loading'
 import Button from '@/components/ui/Button'
+import FormacionProfesionalData from '@/components/forms/FormacionProfesionalData'
 
 export const Create = () => {
   const { id } = useParams()
@@ -83,6 +84,8 @@ export const Create = () => {
             {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
               <div>
                 <DatosPersonalesData register={register} errors={errors} setValue={setValue} watch={watch} />
+
+                <FormacionProfesionalData register={register} errors={errors} setValue={setValue} watch={watch} />
               </div>
             )}
 
