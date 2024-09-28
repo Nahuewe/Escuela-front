@@ -1,9 +1,8 @@
 import React from 'react'
 import LoginForm from '@/components/edja/auth/login-form'
 import { ToastContainer } from 'react-toastify'
-import Illustration from '@/assets/images/auth/portada.jpg'
+import Illustration from '@/assets/images/auth/portada2.jpg'
 import LogoEdja from '@/assets/images/logo/logo-edja.png'
-import Iconos from '@/assets/images/auth/iconos.png'
 
 const Login = () => {
   return (
@@ -22,7 +21,6 @@ const Login = () => {
           </div>
           <div className='right-column relative'>
             <div className='inner-content h-full flex flex-col bg-[#00273D] dark:bg-slate-800'>
-              <img src={Iconos} alt='Iconos EDJA' className='hidden md:inline-block md:w-96 pb-6 mx-auto pt-6 pointer-events-none' />
               <div className='auth-box h-full flex flex-col justify-center'>
                 <div className='text-center 2xl:mb-10 mb-4'>
                   <img src={LogoEdja} alt='Logo EDJA' className='w-36 md:w-52 pb-6 inline-block mx-auto pointer-events-none' />

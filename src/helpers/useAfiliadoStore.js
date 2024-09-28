@@ -129,7 +129,7 @@ export const useAfiliadoStore = () => {
           break
       }
 
-      toast.success(message)
+      toast.info(message)
     } catch (error) {
       toast.error('No se pudo cambiar el estado')
     }

@@ -139,14 +139,14 @@ export const Docentes = () => {
                             (docentes && docentes.length > 0)
                               ? (docentes.map((docente) => (
                                 <tr key={docente.id}>
-                                  <td className='table-td'>{docente.nombre}</td>
+                                  <td className='table-td mayuscula'>{docente.nombre}</td>
                                   <td className='table-td'>{docente.dni}</td>
                                   <td className='table-td'>{formatDate(docente.fecha_nacimiento)}</td>
-                                  <td className='table-td'>{docente.domicilio}</td>
-                                  <td className='table-td'>{docente.formacion}</td>
+                                  <td className='table-td mayuscula'>{docente.domicilio}</td>
+                                  <td className='table-td mayuscula'>{docente.formacion}</td>
                                   <td className='table-td'>{formatDate(docente.fecha_docencia)}</td>
                                   <td className='table-td'>{formatDate(docente.fecha_cargo)}</td>
-                                  <td className='table-td'>{getTipoSituacion(docente.situacion)}</td>
+                                  <td className='table-td mayuscula'>{getTipoSituacion(docente.situacion)}</td>
                                   <td className='table-td'>{docente.telefono}</td>
                                   <td className='table-td flex justify-start gap-2'>
                                     <Tooltip content='Editar' placement='top' arrow animation='shift-away'>

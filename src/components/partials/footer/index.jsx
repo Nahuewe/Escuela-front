@@ -19,7 +19,7 @@ const Footer = ({ className = 'custom-class' }) => {
         <div className='grid md:grid-cols-2 grid-cols-1 md:gap-5'>
           <div className='text-center ltr:md:text-start rtl:md:text-right text-sm'>
             Copyright &copy; <span>{(new Date().getFullYear())} Escuela para Adultos EDJA N°4</span>
-            {/* <a target='_blank' rel='noreferrer' className='animate--text dark:animate--text--dark' href='https://linktr.ee/Nahuel_Soria_Parodi'> → Nahuel Soria Parodi - Todos los derechos reservados ← </a> */}
+            <a target='_blank' rel='noreferrer' className='animate--text dark:animate--text--dark' href='https://linktr.ee/Nahuel_Soria_Parodi'> → Nahuel Soria Parodi - Todos los derechos reservados ← </a>
           </div>
         </div>
       </div>

@@ -138,6 +138,7 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
                   Nombre Completo
                   <strong className='obligatorio'>(*)</strong>
                   <Textinput
+                    className='mayuscula'
                     name='nombre'
                     type='text'
                     placeholder='Nombre Completo'
@@ -180,6 +181,7 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
                   Domicilio
                 </label>
                 <Textinput
+                  className='mayuscula'
                   name='domicilio'
                   type='text'
                   register={register}
@@ -194,6 +196,7 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
                   Formación Profesional
                 </label>
                 <Textinput
+                  className='mayuscula'
                   name='formacion'
                   type='text'
                   placeholder='Formación profesional'
@@ -232,6 +235,7 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
                   Situación de Revista
                 </label>
                 <SelectForm
+                  className='mayuscula'
                   register={register('situacion')}
                   options={situacion}
                 />

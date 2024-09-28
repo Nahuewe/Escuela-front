@@ -1,12 +1,12 @@
 export const tipoBeca = {
-  1: 'Sí',
-  2: 'No'
+  1: 'SÍ',
+  2: 'NO'
 }
 
 export const tipoSituacion = {
-  1: 'Titular',
-  2: 'Suplente',
-  3: 'Interino'
+  1: 'TITULAR',
+  2: 'SUPLENTE',
+  3: 'INTERINO'
 }
 
 export const tipoRoles = {

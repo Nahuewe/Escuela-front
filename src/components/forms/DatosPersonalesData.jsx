@@ -11,8 +11,8 @@ import Loading from '@/components/Loading'
 import { edjaApi } from '../../api'
 
 const becas = [
-  { id: 1, nombre: 'Sí' },
-  { id: 2, nombre: 'No' }
+  { id: 1, nombre: 'SÍ' },
+  { id: 2, nombre: 'NO' }
 ]
 
 const initialForm = {
@@ -39,7 +39,6 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
 
   const handleDateChange = (date, field) => {
     const formattedDate = new Date(date).toLocaleDateString('en-CA')
-
     if (field === 'fecha_nacimiento') {
       setPicker(date)
       setValue(field, formattedDate)
@@ -160,6 +159,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     <strong className='obligatorio'>(*)</strong>
                   </label>
                   <Textinput
+                    className='mayuscula'
                     name='apellido'
                     type='text'
                     register={register}
@@ -175,6 +175,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     <strong className='obligatorio'>(*)</strong>
                   </label>
                   <Textinput
+                    className='mayuscula'
                     name='nombre'
                     type='text'
                     register={register}
@@ -214,6 +215,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
 
                 <Numberinput
                   label='Edad de Ingreso'
+                  className='mayuscula'
                   register={register}
                   id='edad'
                   type='number'
@@ -224,6 +226,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
 
                 <SelectForm
                   register={register('sexo_id')}
+                  className='mayuscula'
                   title='Sexo'
                   options={sexo}
                   onChange={(e) => handleSelectChange('sexo_id', e)}
@@ -244,6 +247,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     Domicilio
                   </label>
                   <Textinput
+                    className='mayuscula'
                     name='domicilio'
                     type='text'
                     register={register}
@@ -258,6 +262,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     Ocupación
                   </label>
                   <Textinput
+                    className='mayuscula'
                     name='ocupacion'
                     type='text'
                     register={register}
@@ -272,6 +277,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     Enfermedades
                   </label>
                   <Textinput
+                    className='mayuscula'
                     name='enfermedad'
                     type='text'
                     register={register}
@@ -286,6 +292,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     ¿Tiene Beca?
                   </label>
                   <SelectForm
+                    className='mayuscula'
                     register={register('becas')}
                     options={becas}
                   />
@@ -296,6 +303,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
                     Observaciones
                   </label>
                   <Textinput
+                    className='mayuscula'
                     name='observacion'
                     type='text'
                     register={register}

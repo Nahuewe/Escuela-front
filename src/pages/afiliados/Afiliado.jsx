@@ -6,6 +6,11 @@ import { cleanAfiliado, setActiveAfiliado } from '@/store/afiliado'
 import { DeleteModal } from '@/components/ui/DeleteModal'
 import { handleShowDelete } from '@/store/layout'
 import { TextInput } from 'flowbite-react'
+import { formatDate, getTipoBeca } from '@/constant/datos-id'
+import { edjaApi } from '@/api'
+import EstadisticasAfiliados from './EstadisticasAfiliados'
+import Tooltip from '@/components/ui/Tooltip'
+import * as XLSX from 'xlsx'
 import Card from '@/components/ui/Card'
 import Pagination from '@/components/ui/Pagination'
 import Loading from '@/components/Loading'
@@ -13,7 +18,6 @@ import EditButton from '@/components/buttons/EditButton'
 import ViewButton from '@/components/buttons/ViewButton'
 import AfiliadoButton from '@/components/buttons/AfiliadoButton'
 import columnAfiliado from '@/json/columnAfiliado'
-import { useDocenteStore } from '../../helpers/useDocenteStore'
 
 export const Afiliado = () => {
   const navigate = useNavigate()
@@ -21,17 +25,20 @@ export const Afiliado = () => {
   const { user } = useSelector((state) => state.auth)
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [isExporting, setIsExporting] = useState(false)
+  const [showEstadisticas, setShowEstadisticas] = useState(false)
+  let searchTimeout = null
 
   const {
     afiliados,
+    afiliadosSinPaginar,
     paginate,
     startLoadingAfiliado,
+    startGetAfiliadosSinPaginar,
     startEditAfiliado,
     startDeleteAfiliado,
     startSearchAfiliado
   } = useAfiliadoStore()
-
-  const { docentesSinPaginar, startGetDocenteSinPaginar } = useDocenteStore()
 
   const filteredAfiliados = (user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) ? afiliados : afiliados.filter(afiliado => afiliado.seccional_id === user.seccional_id)
 
@@ -63,19 +70,25 @@ export const Afiliado = () => {
 
   async function onSearch ({ target: { value } }) {
     setSearch(value)
-    if (value.length === 0) await loadingAfiliado()
-    if (value.length <= 1) return false
-    await startSearchAfiliado(value)
-  }
 
-  const getFormacionName = (formacionId) => {
-    const docente = docentesSinPaginar.find(docente => docente.id === formacionId)
-    return docente ? docente.formacion : '-'
+    if (searchTimeout) {
+      clearTimeout(searchTimeout)
+    }
+
+    searchTimeout = setTimeout(async () => {
+      if (value.length === 0) {
+        await loadingAfiliado()
+      }
+      if (value.length > 1) {
+        await startSearchAfiliado(value)
+      }
+    }, 1000)
   }
 
   async function loadingAfiliado (page = 1) {
-    !isLoading && setIsLoading(true)
+    if (!isLoading) setIsLoading(true)
     await startLoadingAfiliado(page)
+    await startGetAfiliadosSinPaginar()
     setIsLoading(false)
   }
 
@@ -83,8 +96,75 @@ export const Afiliado = () => {
     const searchParams = new URLSearchParams(window.location.search)
     const page = searchParams.get('page') || 1
     loadingAfiliado(page)
-    startGetDocenteSinPaginar()
   }, [])
+
+  async function handlePersonalista () {
+    try {
+      const response = await edjaApi.get('personalista')
+      const { data } = response.data
+      return data
+    } catch (error) {
+      console.error('Error al obtener los datos:', error)
+      return []
+    }
+  }
+
+  // Función para exportar los datos a Excel
+  async function exportToExcel () {
+    setIsExporting(true)
+    const afiliados = await handlePersonalista()
+
+    if (afiliados.length === 0) {
+      console.log('No hay datos para exportar.')
+      setIsExporting(false)
+      return
+    }
+
+    const personasData = []
+    const formacionData = []
+
+    afiliados.forEach((activeAfiliado) => {
+      if (activeAfiliado.persona) {
+        personasData.push({
+          Nombre: activeAfiliado.persona.nombre?.toUpperCase(),
+          Apellido: activeAfiliado.persona.apellido?.toUpperCase(),
+          DNI: activeAfiliado.persona.dni,
+          'Fecha de Nacimiento': formatDate(activeAfiliado.persona.fecha_nacimiento),
+          'Edad de Ingreso': activeAfiliado.persona.edad,
+          Sexo: activeAfiliado.persona.sexo?.toUpperCase(),
+          Teléfono: activeAfiliado.persona.telefono,
+          Domicilio: activeAfiliado.persona.domicilio?.toUpperCase(),
+          Ocupacion: activeAfiliado.persona.ocupacion?.toUpperCase(),
+          Enfermedades: activeAfiliado.persona.enfermedad?.toUpperCase(),
+          Becas: getTipoBeca(activeAfiliado.persona.becas)?.toUpperCase(),
+          Observacion: activeAfiliado.persona.observacion?.toUpperCase(),
+          Estado: activeAfiliado.persona.estados
+        })
+      }
+
+      if (activeAfiliado.formacion) {
+        formacionData.push(...activeAfiliado.formacion.map(formacion => ({
+          Nombre: activeAfiliado.persona.nombre?.toUpperCase(),
+          Apellido: activeAfiliado.persona.apellido?.toUpperCase(),
+          DNI: activeAfiliado.persona.dni,
+          'Tipo de Formación Profesional': formacion.formacion?.toUpperCase(),
+          'Fecha de Cursado': formatDate(formacion.fecha_cursado),
+          'Fecha de Finalizacion': formatDate(formacion.fecha_finalizacion),
+          Observaciones: formacion.observaciones?.toUpperCase()
+        })))
+      }
+    })
+
+    const wb = XLSX.utils.book_new()
+    const personasSheet = XLSX.utils.json_to_sheet(personasData)
+    const formacionSheet = XLSX.utils.json_to_sheet(formacionData)
+
+    XLSX.utils.book_append_sheet(wb, personasSheet, 'Personas')
+    XLSX.utils.book_append_sheet(wb, formacionSheet, 'Formación Profesional')
+
+    XLSX.writeFile(wb, 'Alumnos.xlsx')
+    setIsExporting(false)
+  }
 
   return (
     <>
@@ -126,6 +206,28 @@ export const Afiliado = () => {
                       btnFunction={startDeleteAfiliado}
                     />
 
+                    {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
+                      <Tooltip content={showEstadisticas ? 'Ocultar estadísticas' : 'Mostrar estadísticas'}>
+                        <button
+                          onClick={() => setShowEstadisticas(!showEstadisticas)}
+                          className='bg-purple-500 hover:bg-purple-700 text-white items-center text-center py-2 px-6 rounded-lg'
+                        >
+                          {showEstadisticas ? 'Estadísticas' : 'Estadísticas'}
+                        </button>
+                      </Tooltip>
+                    )}
+
+                    {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
+                      <button
+                        type='button'
+                        onClick={exportToExcel}
+                        className={`bg-green-500 ${isExporting ? 'cursor-not-allowed opacity-50' : 'hover:bg-green-700'} text-white items-center text-center py-2 px-6 rounded-lg`}
+                        disabled={isExporting}
+                      >
+                        {isExporting ? 'Exportando...' : 'Exportar'}
+                      </button>
+                    )}
+
                     <div className='flex gap-4'>
                       {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
                         <button
@@ -138,6 +240,10 @@ export const Afiliado = () => {
                       )}
                     </div>
                   </div>
+                </div>
+
+                <div className='mt-4 grid sm:grid-cols-2 md:grid-cols-3 grid-cols-1 gap-4'>
+                  {showEstadisticas && <EstadisticasAfiliados afiliadosSinPaginar={afiliadosSinPaginar} />}
                 </div>
               </Card>
 
@@ -160,11 +266,11 @@ export const Afiliado = () => {
                             (filteredAfiliados.length > 0)
                               ? (filteredAfiliados.map((afiliado) => (
                                 <tr key={afiliado.id}>
-                                  <td className='table-td'>{afiliado.apellido}</td>
-                                  <td className='table-td'>{afiliado.nombre}</td>
+                                  <td className='table-td mayuscula'>{afiliado.apellido}</td>
+                                  <td className='table-td mayuscula'>{afiliado.nombre}</td>
                                   <td className='table-td'>{afiliado.dni}</td>
                                   <td className='table-td'>{afiliado.telefono || '-'}</td>
-                                  <td className='table-td'>{getFormacionName(afiliado.formacion[0] || '-')}</td>
+                                  <td className='table-td mayuscula'>{afiliado.ocupacion || '-'}</td>
                                   <td className='table-td'>
                                     <span
                                       className={`inline-block text-black px-3 min-w-[90px] text-center py-1 rounded-full bg-opacity-25 ${afiliado.estado === 'ACTIVO'

@@ -12,7 +12,6 @@ import Textarea from '@/components/ui/Textarea'
 import DatePicker from '../ui/DatePicker'
 import moment from 'moment'
 import Loading from '@/components/Loading'
-import { useDocenteStore } from '../../helpers/useDocenteStore'
 
 const initialForm = {
   formacion_id: null,
@@ -35,8 +34,7 @@ function FormacionProfesionalData () {
   const [formacion, setFormacion] = useState([])
   const [idCounter, setIdCounter] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
-  const [loadingFormaciones, setLoadingFormaciones] = useState(false)
-  const { docentesSinPaginar } = useDocenteStore()
+  const [loadingFormaciones] = useState(false)
 
   function onChange ({ target }) {
     const { name, value } = target
@@ -47,8 +45,8 @@ function FormacionProfesionalData () {
   }
 
   const getFormacionName = (formacionId) => {
-    const docente = docentesSinPaginar.find(docente => docente.id === formacionId)
-    return docente ? docente.formacion : '-'
+    const formacionEncontrada = formacion.find(f => f.id === formacionId)
+    return formacionEncontrada ? formacionEncontrada.formacion : 'Desconocido'
   }
 
   async function handleFormacion () {
@@ -87,11 +85,11 @@ function FormacionProfesionalData () {
   }
 
   function addFormacion () {
-    const selectedFormacionName = getFormacionName(formData.formacion_id) // Obtiene el nombre de la formación
+    const selectedFormacionName = getFormacionName(formData.formacion_id)
 
     const newFormacion = {
       ...formData,
-      nombre_formacion: selectedFormacionName, // Agrega el nombre de la formación
+      nombre_formacion: selectedFormacionName,
       fecha_cursado: picker ? moment(picker[0]).format('YYYY-MM-DD') : null,
       fecha_finalizacion: picker2 ? moment(picker2[0]).format('YYYY-MM-DD') : null,
       id: isEditing ? editingFormacionId : idCounter
@@ -141,32 +139,41 @@ function FormacionProfesionalData () {
 
   useEffect(() => {
     if (activeAfiliado && activeAfiliado.formacion) {
-      const formattedFormaciones = activeAfiliado.formacion.map(formacion => ({
-        ...formacion,
-        formacion,
-        fecha_cursado: formacion.fecha_cursado ? moment(formacion.fecha_cursado).format('YYYY-MM-DD') : null,
-        fecha_finalizacion: formacion.fecha_finalizacion ? moment(formacion.fecha_finalizacion).format('YYYY-MM-DD') : null
-      }))
+      const formattedFormaciones = activeAfiliado.formacion.map(formacionItem => {
+        const nombreFormacion = getFormacionName(formacionItem.formacion_id)
+        return {
+          ...formacionItem,
+          nombre_formacion: nombreFormacion,
+          fecha_cursado: formacionItem.fecha_cursado ? moment(formacionItem.fecha_cursado).format('YYYY-MM-DD') : null,
+          fecha_finalizacion: formacionItem.fecha_finalizacion ? moment(formacionItem.fecha_finalizacion).format('YYYY-MM-DD') : null
+        }
+      })
       setFormaciones(formattedFormaciones)
     }
   }, [activeAfiliado])
 
   useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (activeAfiliado?.formacion) {
-        if (formaciones.length === 0) {
-          setFormaciones(activeAfiliado.formacion)
-        } else {
-          const formacionesExistentesIds = formaciones.map(formacion => formacion.id)
-          const nuevasFormaciones = activeAfiliado.formacion.filter(formacion => !formacionesExistentesIds.includes(formacion.id))
-          setFormaciones(prevFormaciones => [...prevFormaciones, ...nuevasFormaciones])
-        }
-      }
-      setLoadingFormaciones(false)
-    }, 1)
+    if (activeAfiliado && activeAfiliado.formacion) {
+      const timer = setTimeout(() => {
+        const formattedFormaciones = activeAfiliado.formacion.map(formacionItem => {
+          const nombreFormacion = getFormacionName(formacionItem.formacion_id)
+          return {
+            ...formacionItem,
+            nombre_formacion: nombreFormacion,
+            fecha_cursado: formacionItem.fecha_cursado
+              ? moment(formacionItem.fecha_cursado).format('YYYY-MM-DD')
+              : null,
+            fecha_finalizacion: formacionItem.fecha_finalizacion
+              ? moment(formacionItem.fecha_finalizacion).format('YYYY-MM-DD')
+              : null
+          }
+        })
+        setFormaciones(formattedFormaciones)
+      }, 1)
 
-    return () => clearTimeout(timer)
-  }, [activeAfiliado])
+      return () => clearTimeout(timer)
+    }
+  }, [activeAfiliado, formacion])
 
   async function loadingFormacion () {
     !isLoading && setIsLoading(true)
@@ -204,10 +211,11 @@ function FormacionProfesionalData () {
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 
                   <SelectForm
+                    className='mayuscula'
                     value={formData.formacion_id}
                     register={register('formacion_id')}
                     title='Tipo de Formacion'
-                    options={formacion}
+                    options={formacion.map(f => ({ ...f, formacion: f.formacion.toUpperCase() }))}
                     onChange={handleSelectChange}
                   />
 
@@ -244,6 +252,7 @@ function FormacionProfesionalData () {
                       Observaciones
                     </label>
                     <Textarea
+                      className='mayuscula'
                       name='observaciones'
                       value={formData.observaciones}
                       onChange={onChange}
@@ -281,10 +290,12 @@ function FormacionProfesionalData () {
             <tbody className='divide-y dark:divide-gray-700'>
               {formaciones.map((formacion) => (
                 <tr key={formacion.id} className='bg-white dark:bg-gray-800 dark:border-gray-700'>
-                  <td className='px-4 py-2 text-center dark:text-white'>{formacion.nombre_formacion}</td> {/* Muestra el nombre de la formación */}
+                  <td className='px-4 py-2 text-center dark:text-white mayuscula'>{formacion.nombre_formacion}</td>
                   <td className='px-4 py-2 text-center dark:text-white'>{formatDate(formacion.fecha_cursado)}</td>
-                  <td className='px-4 py-2 text-center dark:text-white'>{formatDate(formacion.fecha_finalizacion)}</td>
-                  <td className='px-4 py-2 text-center dark:text-white'>{formacion.observaciones}</td>
+                  <td className='px-4 py-2 text-center dark:text-white'>
+                    {formacion.fecha_finalizacion ? formatDate(formacion.fecha_finalizacion) : 'Cursando...'}
+                  </td>
+                  <td className='px-4 py-2 text-center dark:text-white mayuscula'>{formacion.observaciones}</td>
                   <td className='text-center py-2 gap-4 flex justify-center'>
                     <Tooltip content='Editar'>
                       <button

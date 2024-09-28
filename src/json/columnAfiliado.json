@@ -16,8 +16,8 @@
         "field": "telefono"
     },
     {
-        "label": "Formación Profesional",
-        "field": "formacion"
+        "label": "Ocupación",
+        "field": "ocupacion"
     },
     {
         "label": "Estado",

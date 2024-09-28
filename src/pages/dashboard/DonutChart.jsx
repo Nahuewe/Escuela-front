@@ -7,7 +7,7 @@ import * as htmlToImage from 'html-to-image'
 const DonutChart = ({ afiliadosSinPaginar, height = 350 }) => {
   const [isDark] = useDarkMode()
   const [chartType, setChartType] = useState('active')
-  const [series, setSeries] = useState([0, 0, 0])
+  const [series, setSeries] = useState([0, 0])
   const [totalAfiliados, setTotalAfiliados] = useState(0)
   const chartRef = useRef(null)
 
@@ -16,8 +16,7 @@ const DonutChart = ({ afiliadosSinPaginar, height = 350 }) => {
       const activeCount = afiliadosSinPaginar.filter(a => a.estado === 'ACTIVO').length
       const inactiveCount = afiliadosSinPaginar.filter(a => a.estado === 'INACTIVO').length
       setSeries([activeCount, inactiveCount])
-      const total = activeCount + inactiveCount
-      setTotalAfiliados(total)
+      setTotalAfiliados(activeCount + inactiveCount)
     }
   }, [afiliadosSinPaginar])
 
@@ -25,57 +24,38 @@ const DonutChart = ({ afiliadosSinPaginar, height = 350 }) => {
   const inactiveColor = isDark ? '#FF7F7F' : '#f48f8f'
 
   const options = {
-    labels: ['Alumnos activos', 'Alumnos dados de baja'],
-    dataLabels: {
-      enabled: false
-    },
+    labels: ['Activos', 'Inactivos'],
+    dataLabels: { enabled: false },
     colors: [
-      chartType === 'active' ? activeColor : colorOpacity(activeColor, 0.10),
-      chartType === 'inactive' ? inactiveColor : colorOpacity(inactiveColor, 0.10)
+      chartType === 'active' ? activeColor : colorOpacity(activeColor, 0.5),
+      chartType === 'inactive' ? inactiveColor : colorOpacity(inactiveColor, 0.5)
     ],
-    legend: {
-      position: 'bottom',
-      fontSize: '12px',
-      fontFamily: 'Inter',
-      fontWeight: 400,
-      show: false
-    },
+    legend: { position: 'bottom', fontSize: '12px', show: false },
     plotOptions: {
       pie: {
         donut: {
           size: '40%',
           labels: {
             show: true,
-            name: {
-              show: false,
-              fontSize: '14px',
-              fontWeight: 'bold',
-              fontFamily: 'Inter',
-              color: isDark ? '#cbd5e1' : '#aa7'
-            },
             value: {
               show: true,
-              fontSize: '16px',
-              fontFamily: 'Inter',
+              fontSize: '18px',
+              fontWeight: 'bold',
               color: isDark ? '#ffffff' : '#000000',
-              formatter (val) {
-                return `${parseInt(val)}`
-              }
+              formatter (val) { return `${parseInt(val)}` }
             },
             total: {
               show: true,
-              fontSize: '10px',
+              label: 'Total',
+              fontSize: '16px',
+              fontWeight: 'bold',
               color: isDark ? '#cbd5e1' : '#475569'
             }
           }
         }
       }
     },
-    animate: {
-      enabled: true,
-      easing: 'easeinout',
-      speed: 800
-    }
+    animate: { enabled: true, easing: 'easeinout', speed: 800 }
   }
 
   function colorOpacity (color, opacity) {
@@ -85,29 +65,42 @@ const DonutChart = ({ afiliadosSinPaginar, height = 350 }) => {
 
   const downloadChart = () => {
     if (chartRef.current) {
-      htmlToImage.toPng(chartRef.current)
-        .then(function (dataUrl) {
-          const link = document.createElement('a')
-          link.download = 'AlumnosTotales.png'
-          link.href = dataUrl
-          link.click()
-        })
+      htmlToImage.toPng(chartRef.current).then(function (dataUrl) {
+        const link = document.createElement('a')
+        link.download = 'AlumnosTotales.png'
+        link.href = dataUrl
+        link.click()
+      })
     }
   }
 
   return (
-    <Card>
-      <div className={`flex justify-end ${isDark ? 'dark' : ''}`}>
-        <button className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} onClick={downloadChart}>Descargar</button>
+    <Card className='p-6'>
+      <div className='flex justify-between items-center'>
+        <h4 className='text-lg font-semibold'>{`Total de Alumnos: ${totalAfiliados}`}</h4>
+        <button
+          className={`px-4 py-2 rounded-md transition ${isDark ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900'} hover:bg-gray-300`}
+          onClick={downloadChart}
+        >
+          Descargar
+        </button>
       </div>
-      <h4>Total de Alumnos</h4>
-      <p className='mt-2'>Cantidad: {totalAfiliados}</p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '8px', marginTop: '8px' }}>
-        <button className={`btn ${chartType === 'active' ? 'btn-primary' : ''}`} style={{ backgroundColor: activeColor, padding: '8px' }} onClick={() => setChartType('active')}>Alumnos activos</button>
-        <button className={`btn ${chartType === 'inactive' ? 'btn-danger' : ''}`} style={{ backgroundColor: inactiveColor, padding: '8px' }} onClick={() => setChartType('inactive')}>Alumnos dados de baja</button>
+      <div className='flex justify-center mt-4 mb-4 space-x-4'>
+        <button
+          className={`px-4 py-2 rounded-md transition ${chartType === 'active' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800'}`}
+          onClick={() => setChartType('active')}
+        >
+          Alumnos activos
+        </button>
+        <button
+          className={`px-4 py-2 rounded-md transition ${chartType === 'inactive' ? 'bg-red-600 text-white' : 'bg-gray-300 text-gray-800'}`}
+          onClick={() => setChartType('inactive')}
+        >
+          Alumnos dados de baja
+        </button>
       </div>
       <div ref={chartRef}>
-        <Chart options={options} series={series} type='pie' height={height} />
+        <Chart options={options} series={series} type='donut' height={height} />
       </div>
     </Card>
   )

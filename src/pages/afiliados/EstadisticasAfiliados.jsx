@@ -3,44 +3,38 @@ import Icon from '@/components/ui/Icon'
 
 const EstadisticasAfiliados = ({ afiliadosSinPaginar }) => {
   const countAfiliadosPorEstado = (data) => {
-    return {
+    const totals = {
       totales: data.length,
       activos: data.filter(a => a.estado === 'ACTIVO').length,
-      inactivos: data.filter(a => a.estado === 'INACTIVO').length,
-      pendiente: data.filter(a => a.estado === 'PENDIENTE').length
+      inactivos: data.filter(a => a.estado === 'INACTIVO').length
     }
+
+    return totals
   }
 
   const totalsByEstado = useMemo(() => countAfiliadosPorEstado(afiliadosSinPaginar), [afiliadosSinPaginar])
 
   const statistics = [
     {
-      title: 'Afiliados Totales',
+      title: 'Alumnos Totales',
       count: totalsByEstado.totales || 0,
       bg: 'bg-info-500',
       text: 'text-info-500',
       icon: 'heroicons-solid:user-group'
     },
     {
-      title: 'Afiliados Activos',
+      title: 'Alumnos Activos',
       count: totalsByEstado.activos || 0,
       bg: 'bg-success-500',
       text: 'text-success-500',
       icon: 'heroicons-solid:user-plus'
     },
     {
-      title: 'Afiliados Inactivos',
+      title: 'Alumnos Inactivos',
       count: totalsByEstado.inactivos || 0,
       bg: 'bg-danger-500',
       text: 'text-danger-500',
       icon: 'heroicons-solid:user-remove'
-    },
-    {
-      title: 'Afiliados Pendientes',
-      count: totalsByEstado.pendiente || 0,
-      bg: 'bg-warning-500',
-      text: 'text-warning-500',
-      icon: 'heroicons-solid:clock'
     }
   ]
 
