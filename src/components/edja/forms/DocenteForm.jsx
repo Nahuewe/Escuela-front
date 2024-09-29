@@ -11,9 +11,9 @@ import Loading from '@/components/Loading'
 import moment from 'moment'
 
 const situacion = [
-  { id: 1, nombre: 'Titular' },
-  { id: 2, nombre: 'Suplente' },
-  { id: 3, nombre: 'Interino' }
+  { id: 1, nombre: 'TITULAR' },
+  { id: 2, nombre: 'SUPLENTE' },
+  { id: 3, nombre: 'INTERINO' }
 ]
 
 const FormValidationSaving = yup

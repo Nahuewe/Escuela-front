@@ -34,6 +34,12 @@ export const menuNormal = [
   },
 
   {
+    title: 'Dashboard',
+    icon: 'heroicons-outline:presentation-chart-line',
+    link: 'dashboard'
+  },
+
+  {
     title: 'Alumnos',
     icon: 'heroicons-outline:user-plus',
     link: 'alumnos'
