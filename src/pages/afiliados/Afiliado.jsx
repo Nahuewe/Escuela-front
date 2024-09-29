@@ -159,7 +159,7 @@ export const Afiliado = () => {
     const personasSheet = XLSX.utils.json_to_sheet(personasData)
     const formacionSheet = XLSX.utils.json_to_sheet(formacionData)
 
-    XLSX.utils.book_append_sheet(wb, personasSheet, 'Personas')
+    XLSX.utils.book_append_sheet(wb, personasSheet, 'Alumnos')
     XLSX.utils.book_append_sheet(wb, formacionSheet, 'Formación Profesional')
 
     XLSX.writeFile(wb, 'Alumnos.xlsx')
