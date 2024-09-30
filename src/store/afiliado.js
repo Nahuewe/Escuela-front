@@ -4,6 +4,7 @@ const initialState = {
   afiliados: [],
   afiliadosSinPaginar: [],
   formacion: [],
+  formacionSinPaginar: [],
   persona: {},
   paginate: null,
   activeAfiliado: null,
@@ -21,6 +22,9 @@ export const afiliadoSlice = createSlice({
     },
     handleAfiliadosSinPaginar: (state, { payload }) => {
       state.afiliadosSinPaginar = payload
+    },
+    handleFormacionSinPaginar: (state, { payload }) => {
+      state.formacionSinPaginar = payload
     },
     setActiveAfiliado: (state, { payload }) => {
       if (!payload) {
@@ -73,6 +77,7 @@ export const afiliadoSlice = createSlice({
 export const {
   handleAfiliado,
   handleAfiliadosSinPaginar,
+  handleFormacionSinPaginar,
   setActiveAfiliado,
   onAddOrUpdateFormacion,
   onDeleteFormacion,

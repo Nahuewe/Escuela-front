@@ -4,6 +4,7 @@ import { toast } from 'react-toastify'
 import { handleAfiliado, handleAfiliadosSinPaginar, onUpdateAfiliado, setErrorMessage, onShowAfiliado, cleanAfiliado } from '@/store/afiliado'
 import { edjaApi } from '../api'
 import { useNavigate } from 'react-router-dom'
+import { handleFormacionSinPaginar } from '../store/afiliado'
 
 export const useAfiliadoStore = () => {
   const dispatch = useDispatch()
@@ -25,6 +26,16 @@ export const useAfiliadoStore = () => {
       const response = await edjaApi.get('/personaAll')
       const { data } = response.data
       dispatch(handleAfiliadosSinPaginar(data))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const startGetFormacionSinPaginar = async () => {
+    try {
+      const response = await edjaApi.get('/formacion')
+      const { data } = response.data
+      dispatch(handleFormacionSinPaginar(data))
     } catch (error) {
       console.log(error)
     }
@@ -155,6 +166,7 @@ export const useAfiliadoStore = () => {
     // Métodos
     startLoadingAfiliado,
     startGetAfiliadosSinPaginar,
+    startGetFormacionSinPaginar,
     startEditAfiliado,
     startSavingAfiliado,
     startUpdateAfiliado,

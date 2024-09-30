@@ -242,7 +242,7 @@ export const Afiliado = () => {
                   </div>
                 </div>
 
-                <div className='mt-4 grid sm:grid-cols-2 md:grid-cols-3 grid-cols-1 gap-4'>
+                <div className='mt-4 grid sm:grid-cols-2 md:grid-cols-4 grid-cols-1 gap-4'>
                   {showEstadisticas && <EstadisticasAfiliados afiliadosSinPaginar={afiliadosSinPaginar} />}
                 </div>
               </Card>
@@ -270,7 +270,9 @@ export const Afiliado = () => {
                                   <td className='table-td mayuscula'>{afiliado.nombre}</td>
                                   <td className='table-td'>{afiliado.dni}</td>
                                   <td className='table-td'>{afiliado.telefono || '-'}</td>
-                                  <td className='table-td mayuscula'>{afiliado.ocupacion || '-'}</td>
+                                  <td className='table-td mayuscula'>
+                                    {afiliado.formacion?.length > 0 ? afiliado.formacion[afiliado.formacion.length - 1].formacion : '-'}
+                                  </td>
                                   <td className='table-td'>
                                     <span
                                       className={`inline-block text-black px-3 min-w-[90px] text-center py-1 rounded-full bg-opacity-25 ${afiliado.estado === 'ACTIVO'

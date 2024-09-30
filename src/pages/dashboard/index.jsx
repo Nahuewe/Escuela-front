@@ -4,7 +4,7 @@ import Card from '@/components/ui/Card'
 import Loading from '@/components/Loading'
 import EstadisticasDashboard from './EstadisticasDashboard'
 import DonutChart from './DonutChart'
-// import RevenueBarChart from './RevenueBarChart'
+import RevenueBarChart from './RevenueBarChart'
 
 const Dashboard = () => {
   const { afiliadosSinPaginar, startGetAfiliadosSinPaginar } = useAfiliadoStore()
@@ -42,9 +42,9 @@ const Dashboard = () => {
               />
             </div>
 
-            <div className='mt-4 grid sm:grid-cols-1 grid-cols-1 gap-4'>
+            <div className='mt-4 grid sm:grid-cols-2 grid-cols-1 gap-4'>
               <DonutChart afiliadosSinPaginar={afiliadosSinPaginar} />
-              {/* <RevenueBarChart afiliadosSinPaginar={afiliadosSinPaginar} docentesSinPaginar={docentesSinPaginar} /> */}
+              <RevenueBarChart afiliadosSinPaginar={afiliadosSinPaginar} />
             </div>
           </div>
           )}

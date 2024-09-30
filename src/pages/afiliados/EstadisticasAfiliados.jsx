@@ -8,11 +8,45 @@ const EstadisticasAfiliados = ({ afiliadosSinPaginar }) => {
       activos: data.filter(a => a.estado === 'ACTIVO').length,
       inactivos: data.filter(a => a.estado === 'INACTIVO').length
     }
-
     return totals
   }
 
+  const countFormaciones = (data) => {
+    const formacionCount = {}
+
+    if (!Array.isArray(data)) return formacionCount // o lanzar un error
+
+    data.forEach(afiliado => {
+      if (afiliado.formacion && Array.isArray(afiliado.formacion)) {
+        afiliado.formacion.forEach(formacion => {
+          if (formacionCount[formacion.formacion]) {
+            formacionCount[formacion.formacion]++
+          } else {
+            formacionCount[formacion.formacion] = 1
+          }
+        })
+      }
+    })
+
+    // Encontrar la formación más popular
+    let maxCount = 0
+    let popularFormacion = null
+
+    Object.entries(formacionCount).forEach(([formacion, count]) => {
+      if (count > maxCount) {
+        maxCount = count
+        popularFormacion = formacion
+      }
+    })
+
+    return {
+      popularFormacion,
+      totalAlumnos: maxCount
+    }
+  }
+
   const totalsByEstado = useMemo(() => countAfiliadosPorEstado(afiliadosSinPaginar), [afiliadosSinPaginar])
+  const { popularFormacion, totalAlumnos } = useMemo(() => countFormaciones(afiliadosSinPaginar), [afiliadosSinPaginar])
 
   const statistics = [
     {
@@ -35,6 +69,13 @@ const EstadisticasAfiliados = ({ afiliadosSinPaginar }) => {
       bg: 'bg-danger-500',
       text: 'text-danger-500',
       icon: 'heroicons-solid:user-remove'
+    },
+    {
+      title: 'Formación Más Cursada',
+      count: popularFormacion ? `${popularFormacion} (${totalAlumnos})` : 'No hay formaciones',
+      bg: 'bg-warning-500',
+      text: 'text-warning-500',
+      icon: 'heroicons-solid:star'
     }
   ]
 
@@ -46,7 +87,7 @@ const EstadisticasAfiliados = ({ afiliadosSinPaginar }) => {
           className={`${item.bg} rounded-md p-4 bg-opacity-[0.15] dark:bg-opacity-50 text-center`}
         >
           <div
-            className={`${item.text} mx-auto h-10 w-10 flex flex-col items-center justify-center rounded-full bg-white text-2xl mb-4 `}
+            className={`${item.text} mx-auto h-10 w-10 flex flex-col items-center justify-center rounded-full bg-white text-2xl mb-4`}
           >
             <Icon icon={item.icon} />
           </div>

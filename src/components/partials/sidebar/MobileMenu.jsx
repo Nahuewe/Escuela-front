@@ -33,15 +33,15 @@ const MobileMenu = ({ className = 'custom-class', user }) => {
       <div className='logo-segment flex justify-between items-center bg-white dark:bg-slate-800 z-[9] h-[85px]  px-4 '>
         <Link to='/alumnos'>
           <div className='flex items-center space-x-4'>
-            <div className='logo-icon'>
+            {/* <div className='logo-icon'>
               {!isDark && !isSemiDark
                 ? (
                   <img src={LogoEdja} alt='Logo Edja' className='w-32 rounded-md' />
                   )
                 : (
-                  <img src={LogoEdja} alt='Logo Edja' className='w-32 rounded-md' />
+                  <img src={LogoEdja} alt='Logo Edja' className='w-48 h-24 rounded-md' />
                   )}
-            </div>
+            </div> */}
           </div>
         </Link>
         <button

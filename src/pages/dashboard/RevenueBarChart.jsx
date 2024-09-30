@@ -4,7 +4,6 @@ import useDarkMode from '@/hooks/useDarkMode'
 import useRtl from '@/hooks/useRtl'
 import Card from '@/components/ui/Card'
 import * as htmlToImage from 'html-to-image'
-import { useDocenteStore } from '@/helpers/useDocenteStore'
 
 const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
   const chartRef = useRef(null)
@@ -12,30 +11,42 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
   const [isRtl] = useRtl()
   const [series, setSeries] = useState([])
   const [totalData, setTotalData] = useState(0)
-  const { docentesSinPaginar } = useDocenteStore()
-
-  const getFormacionName = (formacionId) => {
-    const docente = docentesSinPaginar.find(docente => docente.id === formacionId)
-    return docente ? docente.formacion : 'Formación no Asignada'
-  }
+  const [topFormacion, setTopFormacion] = useState('')
 
   useEffect(() => {
     if (afiliadosSinPaginar && afiliadosSinPaginar.length > 0) {
       const formaciones = {}
 
+      // Contar las formaciones
       afiliadosSinPaginar.forEach(afiliado => {
-        const formacion = getFormacionName(afiliado.formacion)
-        formaciones[formacion] = (formaciones[formacion] || 0) + 1
+        afiliado.formacion.forEach(f => {
+          if (formaciones[f.formacion]) {
+            formaciones[f.formacion] += 1
+          } else {
+            formaciones[f.formacion] = 1
+          }
+        })
       })
 
-      const totalAfiliados = afiliadosSinPaginar.length
+      const totalAfiliados = afiliadosSinPaginar.reduce(
+        (total, afiliado) => total + afiliado.formacion.length,
+        0
+      )
+
+      // Crear los datos de la serie
       const seriesData = Object.keys(formaciones).map(formacion => ({
         name: formacion,
         data: [(formaciones[formacion] / totalAfiliados) * 100]
       }))
 
+      // Encontrar la formación con mayor porcentaje
+      const topFormacion = Object.keys(formaciones).reduce((prev, curr) =>
+        formaciones[curr] > formaciones[prev] ? curr : prev
+      )
+
       setSeries(seriesData)
       setTotalData(totalAfiliados)
+      setTopFormacion(topFormacion)
     }
   }, [afiliadosSinPaginar])
 
@@ -165,7 +176,12 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
       </div>
       <div ref={chartRef}>
         <Chart options={options} series={series} type='bar' height={height} />
-        <div className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} style={{ textAlign: 'center', marginTop: '10px' }}>Total de Formaciones: {totalData}</div>
+        <div className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} style={{ textAlign: 'center', marginTop: '10px' }}>
+          Total de Formaciones Cursadas: {totalData}
+        </div>
+        <div className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} style={{ textAlign: 'center', marginTop: '10px' }}>
+          Formación Más Cursada: {topFormacion}
+        </div>
       </div>
     </Card>
   )
