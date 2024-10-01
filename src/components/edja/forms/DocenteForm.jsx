@@ -267,7 +267,7 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
                 <Textinput
                   className='mayuscula'
                   name='observacion'
-                  type='number'
+                  type='text'
                   placeholder='Observacion'
                   register={register}
                 />
