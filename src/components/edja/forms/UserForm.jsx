@@ -15,8 +15,6 @@ const FormValidationSaving = yup
     apellido: yup.string().required('El apellido es requerido'),
     username: yup.string().required('El usuario es requerido'),
     password: yup.string().required('La contraseña es requerida'),
-    correo: yup.string().required('El correo es requerido'),
-    telefono: yup.string().nullable(),
     roles_id: yup.string().notOneOf([''], 'Debe seleccionar un rol')
   })
   .required()
@@ -26,8 +24,6 @@ const FormValidationUpdate = yup
     nombre: yup.string().required('El nombre es requerido'),
     apellido: yup.string().required('El apellido es requerido'),
     username: yup.string().required('El usuario es requerido'),
-    correo: yup.string().required('El correo es requerido'),
-    telefono: yup.string().nullable(),
     roles_id: yup.string().notOneOf([''], 'Debe seleccionar un rol')
   })
   .required()
@@ -184,7 +180,6 @@ export const UserForm = ({ fnAction, activeUser = null }) => {
             <div>
               <label htmlFor='roles_id' className='form-label space-y-2'>
                 Correo
-                <strong className='obligatorio'>(*)</strong>
                 <Textinput
                   name='correo'
                   placeholder='Correo'

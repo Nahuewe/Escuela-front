@@ -21,6 +21,9 @@ export const docenteSlice = createSlice({
     handleDocenteSinPaginar: (state, { payload }) => {
       state.docentesSinPaginar = payload
     },
+    onShowDocente: (state, { payload }) => {
+      state.activeDocente = payload
+    },
     onAddNewDocente: (state, { payload }) => {
       state.docentes.push(payload)
       state.activeDocente = null
@@ -53,6 +56,7 @@ export const docenteSlice = createSlice({
 export const {
   handleDocente,
   handleDocenteSinPaginar,
+  onShowDocente,
   onAddNewDocente,
   setActiveDocente,
   onDeleteDocente,

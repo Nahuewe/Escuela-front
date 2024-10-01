@@ -1,8 +1,10 @@
 import React, { lazy, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from './helpers/useAuthStore'
-import { Users, Docentes } from './pages'
 import { Create, Afiliado, ShowAfiliado } from './pages/afiliados'
+import { Docentes } from './pages/docentes/Docentes'
+import { ShowDocente } from './pages/docentes/ShowDocentes'
+import { Users } from './pages'
 import Layout from './layout/Layout'
 import Login from './pages/auth/Login'
 import Error from './pages/404'
@@ -50,6 +52,7 @@ function App () {
 
                   {/* Nuevas Rutas */}
                   <Route path='docentes' element={<Docentes />} />
+                  <Route path='docentes/ver/:id' element={<ShowDocente />} />
                   <Route path='usuarios' element={<Users />} />
                 </Route>
 

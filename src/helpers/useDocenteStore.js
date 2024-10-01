@@ -5,6 +5,7 @@ import { handleDocente, handleDocenteSinPaginar, setErrorMessage } from '@/store
 import { handleShowEdit, handleShowModal } from '@/store/layout'
 import { edjaApi } from '../api'
 import { useState } from 'react'
+import { onShowDocente } from '../store/docente'
 
 export const useDocenteStore = () => {
   const { docentes, docentesSinPaginar, paginate, activeDocente } = useSelector(state => state.docente)
@@ -52,6 +53,17 @@ export const useDocenteStore = () => {
       console.error('Error en la actualización de la docente:', errorMessage)
       dispatch(setErrorMessage(errorMessage))
       toast.error(`No se pudo crear la docente: ${errorMessage}`)
+    }
+  }
+
+  const startEditDocente = async (id) => {
+    try {
+      const currentPage = paginate?.current_page || 1
+      const response = await edjaApi.get(`/docente/${id}`)
+      const { data } = response.data
+      dispatch(onShowDocente(data, currentPage))
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -121,6 +133,7 @@ export const useDocenteStore = () => {
     startLoadingDocente,
     startGetDocenteSinPaginar,
     startSavingDocente,
+    startEditDocente,
     startDeleteDocente,
     startUpdateDocente,
     startSearchDocente

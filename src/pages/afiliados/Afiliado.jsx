@@ -266,9 +266,9 @@ export const Afiliado = () => {
                             (filteredAfiliados.length > 0)
                               ? (filteredAfiliados.map((afiliado) => (
                                 <tr key={afiliado.id}>
-                                  <td className='table-td mayuscula'>{afiliado.apellido}</td>
-                                  <td className='table-td mayuscula'>{afiliado.nombre}</td>
-                                  <td className='table-td'>{afiliado.dni}</td>
+                                  <td className='table-td mayuscula'>{afiliado.apellido || '-'}</td>
+                                  <td className='table-td mayuscula'>{afiliado.nombre || '-'}</td>
+                                  <td className='table-td'>{afiliado.dni || '-'}</td>
                                   <td className='table-td'>{afiliado.telefono || '-'}</td>
                                   <td className='table-td mayuscula'>
                                     {afiliado.formacion?.length > 0 ? afiliado.formacion[afiliado.formacion.length - 1].formacion : '-'}

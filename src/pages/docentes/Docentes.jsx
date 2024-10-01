@@ -10,18 +10,26 @@ import Pagination from '@/components/ui/Pagination'
 import Loading from '@/components/Loading'
 import Tooltip from '@/components/ui/Tooltip'
 import { useDocenteStore } from '@/helpers'
-import { setActiveDocente } from '../store/docente'
-import { DocenteForm } from '../components/edja/forms'
+import { setActiveDocente } from '../../store/docente'
+import { DocenteForm } from '../../components/edja/forms'
 import { TextInput } from 'flowbite-react'
 import { formatDate } from '@/constant/datos-id'
 import columnDocente from '@/json/columnDocente'
-import { getTipoSituacion } from '../constant/datos-id'
+import { getTipoSituacion } from '../../constant/datos-id'
+import { useNavigate } from 'react-router-dom'
 
 export const Docentes = () => {
-  const { docentes, paginate, activeDocente, startLoadingDocente, startSavingDocente, startDeleteDocente, startUpdateDocente, startSearchDocente } = useDocenteStore()
+  const { docentes, paginate, activeDocente, startLoadingDocente, startSavingDocente, startDeleteDocente, startEditDocente, startUpdateDocente, startSearchDocente } = useDocenteStore()
   const dispatch = useDispatch()
   const [search, setSearch] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const navigate = useNavigate()
+
+  async function showDocente (id) {
+    const currentPage = paginate?.current_page
+    await startEditDocente(id)
+    navigate(`/docentes/ver/${id}?page=${currentPage}`)
+  }
 
   function onEdit (id) {
     dispatch(setActiveDocente(id))
@@ -139,16 +147,40 @@ export const Docentes = () => {
                             (docentes && docentes.length > 0)
                               ? (docentes.map((docente) => (
                                 <tr key={docente.id}>
-                                  <td className='table-td mayuscula'>{docente.nombre}</td>
-                                  <td className='table-td'>{docente.dni}</td>
-                                  <td className='table-td'>{formatDate(docente.fecha_nacimiento)}</td>
-                                  <td className='table-td mayuscula'>{docente.domicilio}</td>
-                                  <td className='table-td mayuscula'>{docente.formacion}</td>
-                                  <td className='table-td'>{formatDate(docente.fecha_docencia)}</td>
-                                  <td className='table-td'>{formatDate(docente.fecha_cargo)}</td>
-                                  <td className='table-td mayuscula'>{getTipoSituacion(docente.situacion)}</td>
-                                  <td className='table-td'>{docente.telefono}</td>
+                                  <td className='table-td mayuscula'>{docente.nombre || '-'}</td>
+                                  <td className='table-td'>{docente.dni || '-'}</td>
+                                  <td className='table-td mayuscula'>{docente.formacion || '-'}</td>
+                                  <td className='table-td'>{formatDate(docente.fecha_nacimiento) || '-'}</td>
+                                  {/* <td className='table-td mayuscula'>{docente.domicilio || '-'}</td> */}
+                                  {/* <td className='table-td'>{formatDate(docente.fecha_docencia) || '-'}</td>
+                                  <td className='table-td'>{formatDate(docente.fecha_cargo) || '-'}</td> */}
+                                  <td className='table-td mayuscula'>{getTipoSituacion(docente.situacion) || '-'}</td>
+                                  <td className='table-td'>{docente.telefono || '-'}</td>
                                   <td className='table-td flex justify-start gap-2'>
+                                    <Tooltip content='Ver' placement='top' arrow animation='shift-away'>
+                                      <button
+                                        className='bg-indigo-500 text-white p-2 rounded-lg hover:bg-blue-700'
+                                        onClick={() => showDocente(docente.id)}
+                                      >
+                                        <svg
+                                          xmlns='http://www.w3.org/2000/svg'
+                                          className='icon icon-tabler icon-tabler-eye'
+                                          width='24'
+                                          height='24'
+                                          viewBox='0 0 24 24'
+                                          strokeWidth='1.5'
+                                          stroke='#ffffff'
+                                          fill='none'
+                                          strokeLinecap='round'
+                                          strokeLinejoin='round'
+                                        >
+                                          <path stroke='none' d='M0 0h24v24H0z' fill='none' />
+                                          <path d='M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0' />
+                                          <path d='M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6' />
+                                        </svg>
+                                      </button>
+                                    </Tooltip>
+
                                     <Tooltip content='Editar' placement='top' arrow animation='shift-away'>
                                       <button
                                         className='bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-700'

@@ -18,13 +18,17 @@ const situacion = [
 
 const FormValidationSaving = yup
   .object({
-    nombre: yup.string().required('el nombre es requerido')
+    nombre: yup.string().required('El nombre es requerido'),
+    dni: yup.string().required('El DNI es requerido'),
+    formacion: yup.string().required('La formación es requerida')
   })
   .required()
 
 const FormValidationUpdate = yup
   .object({
-    nombre: yup.string().required('el nombre es requerido')
+    nombre: yup.string().required('El nombre es requerido'),
+    dni: yup.string().required('El DNI es requerido'),
+    formacion: yup.string().required('La formación es requerida')
   })
   .required()
 
@@ -110,6 +114,7 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
       setValue('fecha_cargo', activeDocente.fecha_cargo ? moment(activeDocente.fecha_cargo).format('YYYY-MM-DD') : null)
       setValue('situacion', activeDocente.situacion)
       setValue('telefono', activeDocente.telefono)
+      setValue('telefono', activeDocente.observacion)
 
       setPicker(fechaNacimiento ? [fechaNacimiento] : [])
       setPicker2(fechaDocencia ? [fechaDocencia] : [])
@@ -164,6 +169,20 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
               </div>
 
               <div>
+                <label htmlFor='formacion' className='form-label space-y-2'>
+                  Formación Profesional
+                  <strong className='obligatorio'>(*)</strong>
+                </label>
+                <Textinput
+                  className='mayuscula'
+                  name='formacion'
+                  type='text'
+                  placeholder='Formación profesional'
+                  register={register}
+                />
+              </div>
+
+              <div>
                 <label htmlFor='default-picker' className='form-label space-y-2'>
                   Fecha de Nacimiento
                 </label>
@@ -188,19 +207,6 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
                   placeholder='Ingrese el domicilio'
                   error={errors.domicilio}
                   onChange={handleChange(setInput)}
-                />
-              </div>
-
-              <div>
-                <label htmlFor='formacion' className='form-label space-y-2'>
-                  Formación Profesional
-                </label>
-                <Textinput
-                  className='mayuscula'
-                  name='formacion'
-                  type='text'
-                  placeholder='Formación profesional'
-                  register={register}
                 />
               </div>
 
@@ -243,12 +249,26 @@ export const DocenteForm = ({ fnAction, activeDocente = null }) => {
 
               <div>
                 <label htmlFor='telefono' className='form-label space-y-2'>
-                  Teléfono Laboral
+                  Teléfono
                 </label>
                 <Textinput
+                  className='mayuscula'
                   name='telefono'
                   type='number'
-                  placeholder='Teléfono Laboral'
+                  placeholder='Teléfono'
+                  register={register}
+                />
+              </div>
+
+              <div>
+                <label htmlFor='observacion' className='form-label space-y-2'>
+                  Observacion
+                </label>
+                <Textinput
+                  className='mayuscula'
+                  name='observacion'
+                  type='number'
+                  placeholder='Observacion'
                   register={register}
                 />
               </div>

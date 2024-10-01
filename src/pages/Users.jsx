@@ -12,41 +12,7 @@ import Pagination from '@/components/ui/Pagination'
 import Loading from '@/components/Loading'
 import Tooltip from '@/components/ui/Tooltip'
 import { UserForm } from '../components/edja/forms/'
-
-const columns = [
-  {
-    label: 'Nombre',
-    field: 'nombre'
-  },
-  {
-    label: 'Apellido',
-    field: 'apellido'
-  },
-  {
-    label: 'Usuario',
-    field: 'username'
-  },
-  {
-    label: 'Correo',
-    field: 'correo'
-  },
-  {
-    label: 'Teléfono',
-    field: 'telefono'
-  },
-  {
-    label: 'Rol',
-    field: 'roles'
-  },
-  {
-    label: 'Estado',
-    field: 'estado'
-  },
-  {
-    label: 'Acciones',
-    field: 'acciones'
-  }
-]
+import columnUsuario from '@/json/columnUsuario'
 
 export const Users = () => {
   const { users, paginate, activeUser, startLoadingUsers, startSavingUser, startDeleteUser, startUpdateUser } = useUserStore()
@@ -130,7 +96,7 @@ export const Users = () => {
                     <table className='min-w-full divide-y divide-slate-100 table-fixed dark:divide-slate-700'>
                       <thead className='bg-slate-200 dark:bg-slate-700'>
                         <tr>
-                          {columns.map((column, i) => (
+                          {columnUsuario.map((column, i) => (
                             <th key={i} scope='col' className='table-th'>
                               {column.label}
                             </th>
@@ -141,12 +107,11 @@ export const Users = () => {
                         {
                           (filteredUsers.length > 0) && filteredUsers.map((usuario) => (
                             <tr key={usuario.id}>
-                              <td className='table-td'>{usuario.nombre}</td>
-                              <td className='table-td'>{usuario.apellido}</td>
-                              <td className='table-td'>{usuario.user}</td>
-                              <td className='table-td'>{usuario.correo}</td>
-                              <td className='table-td'>{usuario.telefono}</td>
-                              <td className='table-td'>{usuario.rol}</td>
+                              <td className='table-td'>{usuario.nombre || '-'}</td>
+                              <td className='table-td'>{usuario.apellido || '-'}</td>
+                              <td className='table-td'>{usuario.user || '-'}</td>
+                              <td className='table-td'>{usuario.telefono || '-'}</td>
+                              <td className='table-td'>{usuario.rol || '-'}</td>
                               <td className='table-td'>
                                 <span
                                   className={`inline-block px-3 min-w-[90px] text-center py-1 rounded-full bg-opacity-25 ${usuario.estado === 'ACTIVO'

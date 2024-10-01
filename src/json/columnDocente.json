@@ -8,24 +8,12 @@
       "field": "dni"
     },
     {
-      "label": "Fecha de Nacimiento",
-      "field": "fecha_nacimiento"
-    },
-    {
-      "label": "Domicilio",
-      "field": "domicilio"
-    },
-    {
       "label": "Formación Profesional",
       "field": "formacion"
     },
     {
-      "label": "Fecha de Ingreso a la Docencia",
-      "field": "fecha_docencia"
-    },
-    {
-      "label": "Fecha de Ingreso al Cargo",
-      "field": "fecha_cargo"
+      "label": "Fecha de Nacimiento",
+      "field": "fecha_nacimiento"
     },
     {
       "label": "Situación de Revista",
