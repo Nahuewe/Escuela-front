@@ -287,14 +287,8 @@ export const Afiliado = () => {
                                   </td>
                                   <td className='table-td flex justify-start gap-2'>
                                     <ViewButton afiliado={afiliado} onView={showAfiliado} />
-
-                                    {user.roles_id !== 5 && (
-                                      <EditButton afiliado={afiliado} onEdit={onEdit} />
-                                    )}
-
-                                    {user.roles_id === 1 && (
-                                      <AfiliadoButton afiliado={afiliado} onDelete={onDelete} />
-                                    )}
+                                    <EditButton afiliado={afiliado} onEdit={onEdit} />
+                                    <AfiliadoButton afiliado={afiliado} onDelete={onDelete} />
                                   </td>
                                 </tr>
                                 )))

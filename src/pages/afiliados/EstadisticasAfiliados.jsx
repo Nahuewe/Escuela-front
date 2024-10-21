@@ -72,7 +72,7 @@ const EstadisticasAfiliados = ({ afiliadosSinPaginar }) => {
     },
     {
       title: 'Formación Más Cursada',
-      count: popularFormacion ? `${popularFormacion} (${totalAlumnos})` : 'No hay formaciones',
+      count: popularFormacion ? `${popularFormacion.toUpperCase()} (${totalAlumnos})` : 'No hay formaciones',
       bg: 'bg-warning-500',
       text: 'text-warning-500',
       icon: 'heroicons-solid:star'

@@ -81,10 +81,10 @@ export const ShowAfiliado = () => {
                     <tbody className='divide-y dark:divide-gray-700'>
                       {activeAfiliado.formacion.map(formacion => (
                         <tr key={formacion.id} className='bg-white dark:bg-gray-800 dark:border-gray-700'>
-                          <td className='px-4 py-2 text-center dark:text-white mayuscula'>{formacion.formacion}</td>
-                          <td className='px-4 py-2 text-center dark:text-white'>{formatDate(formacion.fecha_cursado)}</td>
-                          <td className='px-4 py-2 text-center dark:text-white'>{formatDate(formacion.fecha_finalizacion)}</td>
-                          <td className='px-4 py-2 text-center dark:text-white mayuscula'>{formacion.observaciones}</td>
+                          <td className='px-4 py-2 text-center dark:text-white mayuscula'>{formacion.formacion || '-'}</td>
+                          <td className='px-4 py-2 text-center dark:text-white'>{formatDate(formacion.fecha_cursado) || '-'}</td>
+                          <td className='px-4 py-2 text-center dark:text-white'>{formatDate(formacion.fecha_finalizacion) || '-'}</td>
+                          <td className='px-4 py-2 text-center dark:text-white mayuscula'>{formacion.observaciones || '-'}</td>
                         </tr>
                       ))}
                     </tbody>

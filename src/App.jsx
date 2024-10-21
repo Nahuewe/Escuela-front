@@ -56,6 +56,7 @@ function App () {
                   <Route path='usuarios' element={<Users />} />
                 </Route>
 
+                <Route path='*' element={<Navigate to='/404' />} />
                 <Route path='/404' element={<Error />} />
               </>
               )
