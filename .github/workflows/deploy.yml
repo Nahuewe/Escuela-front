@@ -1,4 +1,4 @@
-name: Despliegue continuo
+name: Despliegue Continuo
 
 on:
   push:

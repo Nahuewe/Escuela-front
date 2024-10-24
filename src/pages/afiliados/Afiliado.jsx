@@ -136,7 +136,7 @@ export const Afiliado = () => {
           Domicilio: activeAfiliado.persona.domicilio?.toUpperCase(),
           Ocupacion: activeAfiliado.persona.ocupacion?.toUpperCase(),
           Enfermedades: activeAfiliado.persona.enfermedad?.toUpperCase(),
-          Becas: getTipoBeca(activeAfiliado.persona.becas)?.toUpperCase(),
+          Becas: getTipoBeca(activeAfiliado.persona.becas)?.toUpperCase() || '-',
           Observacion: activeAfiliado.persona.observacion?.toUpperCase(),
           Estado: activeAfiliado.persona.estados
         })
