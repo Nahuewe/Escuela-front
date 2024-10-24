@@ -149,7 +149,7 @@ export const Afiliado = () => {
           DNI: activeAfiliado.persona.dni,
           'Tipo de Formación Profesional': formacion.formacion?.toUpperCase(),
           'Fecha de Cursado': formatDate(formacion.fecha_cursado),
-          'Fecha de Finalizacion': formatDate(formacion.fecha_finalizacion),
+          'Fecha de Finalizacion': formatDate(formacion.fecha_finalizacion) || 'Cursando...',
           Observaciones: formacion.observaciones?.toUpperCase()
         })))
       }
