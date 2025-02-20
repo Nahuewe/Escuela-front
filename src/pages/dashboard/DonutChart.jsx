@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react'
 import Chart from 'react-apexcharts'
 import useDarkMode from '@/hooks/useDarkMode'
 import Card from '@/components/ui/Card'
-import * as htmlToImage from 'html-to-image'
 
 const DonutChart = ({ afiliadosSinPaginar, height = 350 }) => {
   const [isDark] = useDarkMode()
@@ -20,8 +19,8 @@ const DonutChart = ({ afiliadosSinPaginar, height = 350 }) => {
     }
   }, [afiliadosSinPaginar])
 
-  const activeColor = isDark ? '#747ffc' : '#0CE7FA'
-  const inactiveColor = isDark ? '#FF7F7F' : '#f48f8f'
+  const activeColor = '#747ffc'
+  const inactiveColor = '#FF7F7F'
 
   const options = {
     labels: ['Activos', 'Inactivos'],
@@ -63,46 +62,31 @@ const DonutChart = ({ afiliadosSinPaginar, height = 350 }) => {
     return color + _opacity.toString(16).toUpperCase()
   }
 
-  const downloadChart = () => {
-    if (chartRef.current) {
-      htmlToImage.toPng(chartRef.current).then(function (dataUrl) {
-        const link = document.createElement('a')
-        link.download = 'AlumnosTotales.png'
-        link.href = dataUrl
-        link.click()
-      })
-    }
-  }
-
   return (
-    <Card className='p-6'>
-      <div className='flex justify-between items-center'>
-        <h4 className='text-lg font-semibold'>{`Total de Alumnos: ${totalAfiliados}`}</h4>
-        <button
-          className={`px-4 py-2 rounded-md transition ${isDark ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900'} hover:bg-gray-300`}
-          onClick={downloadChart}
-        >
-          Descargar
-        </button>
-      </div>
-      <div className='flex justify-center mt-4 mb-4 space-x-4'>
-        <button
-          className={`px-4 py-2 rounded-md transition ${chartType === 'active' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800'}`}
-          onClick={() => setChartType('active')}
-        >
-          Alumnos activos
-        </button>
-        <button
-          className={`px-4 py-2 rounded-md transition ${chartType === 'inactive' ? 'bg-red-600 text-white' : 'bg-gray-300 text-gray-800'}`}
-          onClick={() => setChartType('inactive')}
-        >
-          Alumnos dados de baja
-        </button>
-      </div>
-      <div ref={chartRef}>
-        <Chart options={options} series={series} type='donut' height={height} />
-      </div>
-    </Card>
+    <div className='p-y4'>
+      <Card>
+        <div ref={chartRef}>
+          <h4 className='text-lg font-semibold'>{`Alumnos Totales: ${totalAfiliados}`}</h4>
+          <div className='flex justify-center mt-4 mb-4 space-x-4'>
+            <button
+              className={`px-4 py-2 rounded-md transition ${chartType === 'active' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800'}`}
+              onClick={() => setChartType('active')}
+            >
+              Alumnos activos
+            </button>
+            <button
+              className={`px-4 py-2 rounded-md transition ${chartType === 'inactive' ? 'bg-red-600 text-white' : 'bg-gray-300 text-gray-800'}`}
+              onClick={() => setChartType('inactive')}
+            >
+              Alumnos dados de baja
+            </button>
+          </div>
+          <div>
+            <Chart options={options} series={series} type='donut' height={height} />
+          </div>
+        </div>
+      </Card>
+    </div>
   )
 }
 

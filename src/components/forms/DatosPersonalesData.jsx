@@ -30,6 +30,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
   const [edad, setEdad] = useState('')
   const [, setInput] = useState('')
   const [, setFormData] = useState(initialForm)
+  const [reloadKey, setReloadKey] = useState(0)
 
   async function handleSexo () {
     const response = await edjaApi.get('sexo')
@@ -138,8 +139,21 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
     loadingSexo()
   }, [])
 
+  useEffect(() => {
+    if (activeAfiliado) {
+      const intervals = [100]
+      const timers = intervals.map((interval) =>
+        setTimeout(() => {
+          setReloadKey((prevKey) => prevKey + 1)
+        }, interval)
+      )
+
+      return () => timers.forEach(clearTimeout)
+    }
+  }, [activeAfiliado])
+
   return (
-    <>
+    <div key={reloadKey}>
       {isLoading
         ? (
           <Loading className='mt-28 md:mt-64' />
@@ -316,7 +330,7 @@ function DatosPersonalesData ({ register, setValue, errors, watch }) {
             </Card>
           </div>
           )}
-    </>
+    </div>
   )
 }
 

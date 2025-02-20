@@ -14,9 +14,10 @@ export const Create = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
-  const [isParamsLoading, setIsParamsLoading] = useState(true)
-  const { activeAfiliado, startSavingAfiliado, startUpdateAfiliado, startLoadingAfiliado, startEditAfiliado } = useAfiliadoStore()
+  const [isParamsLoading] = useState(true)
+  const { activeAfiliado, startSavingAfiliado, startUpdateAfiliado, startEditAfiliado, paginate } = useAfiliadoStore()
   const { user } = useSelector((state) => state.auth)
+  const currentPage = paginate?.current_page || 1
 
   const FormValidationSchema = yup.object().shape({
     nombre: yup.string().required('El nombre es requerido'),
@@ -42,21 +43,23 @@ export const Create = () => {
     }
   }
 
-  async function loadingAfiliado (page = 1) {
-    !isLoading && setIsLoading(true)
-
-    await startLoadingAfiliado(page)
-    setIsLoading(false)
-  }
-
-  const startGetInitial = async () => {
-    setIsParamsLoading(false)
-  }
-
   useEffect(() => {
-    loadingAfiliado()
-    startGetInitial()
-  }, [])
+    const fetchData = async () => {
+      setIsLoading(true)
+
+      try {
+        if (id) {
+          await startEditAfiliado(id)
+        }
+      } catch (error) {
+        console.error('Error al cargar los datos del afiliado:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [id])
 
   useEffect(() => {
     if (!id) return setIsLoading(false)
@@ -71,7 +74,11 @@ export const Create = () => {
         setValue(key, value)
       })
     }
-  }, [activeAfiliado])
+  }, [activeAfiliado, setValue])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <>
@@ -83,15 +90,18 @@ export const Create = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
               <div>
-                <DatosPersonalesData register={register} errors={errors} setValue={setValue} watch={watch} />
+                <DatosPersonalesData register={register} errors={errors} setValue={setValue} watch={watch} isLoadingParent={isLoading} />
 
-                <FormacionProfesionalData register={register} errors={errors} setValue={setValue} watch={watch} />
+                <FormacionProfesionalData register={register} errors={errors} setValue={setValue} watch={watch} isLoadingParent={isLoading} />
               </div>
             )}
 
             <div className='flex justify-end gap-4 mt-8'>
               <div className='ltr:text-right rtl:text-left'>
-                <button className='btn-danger items-center text-center py-2 px-6 rounded-lg' onClick={() => navigate('/alumnos')}>
+                <button
+                  className='btn-danger items-center text-center py-2 px-6 rounded-lg'
+                  onClick={() => navigate(`/alumnos?page=${currentPage}`)}
+                >
                   Volver
                 </button>
               </div>
@@ -99,7 +109,11 @@ export const Create = () => {
                 <Button
                   type='submit'
                   text={isSubmitting ? 'Guardando' : 'Guardar'}
-                  className={`bg-green-500 ${isSubmitting ? 'cursor-not-allowed opacity-50' : 'hover:bg-green-700'} text-white items-center text-center py-2 px-6 rounded-lg`}
+                  className={`bg-green-500 ${
+                  isSubmitting
+                    ? 'cursor-not-allowed opacity-50'
+                    : 'hover:bg-green-700'
+                } text-white items-center text-center py-2 px-6 rounded-lg`}
                   disabled={isSubmitting}
                   onClick={isSubmitting ? undefined : handleSubmit}
                 />

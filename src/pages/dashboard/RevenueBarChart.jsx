@@ -3,7 +3,6 @@ import Chart from 'react-apexcharts'
 import useDarkMode from '@/hooks/useDarkMode'
 import useRtl from '@/hooks/useRtl'
 import Card from '@/components/ui/Card'
-import * as htmlToImage from 'html-to-image'
 
 const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
   const chartRef = useRef(null)
@@ -11,44 +10,73 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
   const [isRtl] = useRtl()
   const [series, setSeries] = useState([])
   const [totalData, setTotalData] = useState(0)
-  const [topFormacion, setTopFormacion] = useState('')
+  const [activeSeries, setActiveSeries] = useState({})
+  const generateColor = (str) => {
+    let hash = 0
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    let color = '#'
+    for (let i = 0; i < 3; i++) {
+      color += ('00' + ((hash >> (i * 8)) & 0xFF).toString(16)).slice(-2)
+    }
+    return color
+  }
+
+  const getBrightness = (hex) => {
+    const rgb = parseInt(hex.slice(1), 16)
+    const r = (rgb >> 16) & 0xff
+    const g = (rgb >> 8) & 0xff
+    const b = rgb & 0xff
+    return (r * 299 + g * 587 + b * 114) / 1000
+  }
+
+  const getTextColor = (backgroundColor) => {
+    return getBrightness(backgroundColor) > 128 ? '#000000' : '#FFFFFF'
+  }
 
   useEffect(() => {
-    if (afiliadosSinPaginar && afiliadosSinPaginar.length > 0) {
+    if (afiliadosSinPaginar) {
       const formaciones = {}
 
-      // Contar las formaciones
       afiliadosSinPaginar.forEach(afiliado => {
-        afiliado.formacion.forEach(f => {
-          if (formaciones[f.formacion]) {
-            formaciones[f.formacion] += 1
-          } else {
-            formaciones[f.formacion] = 1
-          }
-        })
+        const formacion = afiliado.formacion?.[0]?.formacion || 'Formación no Asignada'
+        const estado = afiliado.estado || 'INACTIVO'
+
+        if (!formaciones[formacion]) {
+          formaciones[formacion] = { ACTIVO: 0, INACTIVO: 0 }
+        }
+
+        formaciones[formacion][estado] += 1
       })
 
-      const totalAfiliados = afiliadosSinPaginar.reduce(
-        (total, afiliado) => total + afiliado.formacion.length,
-        0
-      )
-
-      // Crear los datos de la serie
+      const totalAfiliados = afiliadosSinPaginar.length
       const seriesData = Object.keys(formaciones).map(formacion => ({
         name: formacion,
-        data: [(formaciones[formacion] / totalAfiliados) * 100]
+        data: [
+          { x: 'ACTIVO', y: formaciones[formacion].ACTIVO },
+          { x: 'INACTIVO', y: formaciones[formacion].INACTIVO }
+        ],
+        color: generateColor(formacion)
       }))
-
-      // Encontrar la formación con mayor porcentaje
-      const topFormacion = Object.keys(formaciones).reduce((prev, curr) =>
-        formaciones[curr] > formaciones[prev] ? curr : prev
-      )
 
       setSeries(seriesData)
       setTotalData(totalAfiliados)
-      setTopFormacion(topFormacion)
+
+      const initialActiveSeries = {}
+      seriesData.forEach((serie) => {
+        initialActiveSeries[serie.name] = false
+      })
+      setActiveSeries(initialActiveSeries)
     }
   }, [afiliadosSinPaginar])
+
+  const handleSeriesToggle = (formacion) => {
+    setActiveSeries(prevState => ({
+      ...prevState,
+      [formacion]: !prevState[formacion]
+    }))
+  }
 
   const options = {
     chart: {
@@ -64,10 +92,10 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
       }
     },
     title: {
-      text: 'Porcentaje de Alumnos Por Formación',
+      text: 'Alumnos Activos e Inactivos',
       align: 'left',
       offsetX: isRtl ? '0%' : 0,
-      offsetY: 13,
+      offsetY: 0,
       floating: false,
       style: {
         fontSize: '20px',
@@ -77,7 +105,16 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
       }
     },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      style: {
+        fontSize: '12px',
+        colors: [isDark ? '#fefefe' : '#fefefe']
+      },
+      formatter: function (val, opts) {
+        return `${val}`
+      },
+      offsetX: 0,
+      offsetY: 0
     },
     stroke: {
       show: true,
@@ -94,7 +131,7 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
       }
     },
     xaxis: {
-      categories: ['Porcentaje de Formaciones'],
+      categories: ['ACTIVOS', 'INACTIVOS'],
       labels: {
         style: {
           colors: isDark ? '#CBD5E1' : '#475569',
@@ -114,24 +151,21 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
     tooltip: {
       y: {
         formatter: function (val) {
-          return val.toFixed(2) + '%'
+          return val + ' Alumnos'
         }
       },
       theme: isDark ? 'dark' : 'light'
     },
     legend: {
       labels: {
-        colors: isDark ? '#ffffff' : '#000000'
+        colors: isDark ? '#ffffff' : '#808080'
+      },
+      itemMargin: {
+        horizontal: 10,
+        vertical: 10
       }
     },
-    colors: [
-      '#4669FA', '#0CE7FA', '#FA916B', '#51BB25', '#FFD500',
-      '#FF7A00', '#7C3AED', '#34B3EB', '#FF5247', '#33CC33',
-      '#FFA07A', '#00FFFF', '#C0C0C0', '#808080', '#FF0000',
-      '#800000', '#FFFF00', '#808000', '#00FF00', '#008000',
-      '#00FFFF', '#008080', '#0000FF', '#000080', '#FF00FF',
-      '#800080'
-    ],
+    colors: series.map(serie => serie.color),
     grid: {
       show: true,
       borderColor: isDark ? '#334155' : '#E2E8F0',
@@ -149,7 +183,9 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
           },
           plotOptions: {
             bar: {
-              columnWidth: '80%'
+              dataLabels: {
+                position: 'center'
+              }
             }
           }
         }
@@ -157,31 +193,40 @@ const RevenueBarChart = ({ afiliadosSinPaginar, height = 400 }) => {
     ]
   }
 
-  const downloadChart = () => {
-    if (chartRef.current) {
-      htmlToImage.toPng(chartRef.current)
-        .then(function (dataUrl) {
-          const link = document.createElement('a')
-          link.download = 'PorcentajeAlumnosPorFormacion.png'
-          link.href = dataUrl
-          link.click()
-        })
-    }
-  }
+  const filteredSeries = series.filter(serie => activeSeries[serie.name])
 
   return (
     <Card>
-      <div className={`flex justify-end ${isDark ? 'dark' : ''}`}>
-        <button className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} onClick={downloadChart}>Descargar</button>
-      </div>
       <div ref={chartRef}>
-        <Chart options={options} series={series} type='bar' height={height} />
-        <div className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} style={{ textAlign: 'center', marginTop: '10px' }}>
-          Total de Formaciones Cursadas: {totalData}
-        </div>
-        <div className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} style={{ textAlign: 'center', marginTop: '10px' }}>
-          Formación Más Cursada: {topFormacion}
-        </div>
+        <Chart options={options} series={filteredSeries} type='bar' height={height} />
+        <div className={`btn ${isDark ? 'btn-dark' : 'btn-light'}`} style={{ textAlign: 'center' }}>Total de Alumnos: {totalData}</div>
+      </div>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        {series.map((serie, index) => {
+          const serieColor = serie.color
+          const textColor = getTextColor(serieColor)
+          return (
+            <button
+              key={serie.name}
+              className='btn px-6 py-2 mx-2 my-2 rounded-lg transition duration-300 ease-in-out'
+              style={{
+                backgroundColor: activeSeries[serie.name] ? serieColor : '#E5E7EB',
+                color: activeSeries[serie.name] ? textColor : '#374151'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = serieColor
+                e.target.style.color = '#fff'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = activeSeries[serie.name] ? serieColor : '#E5E7EB'
+                e.target.style.color = activeSeries[serie.name] ? textColor : '#374151'
+              }}
+              onClick={() => handleSeriesToggle(serie.name)}
+            >
+              {serie.name}
+            </button>
+          )
+        })}
       </div>
     </Card>
   )

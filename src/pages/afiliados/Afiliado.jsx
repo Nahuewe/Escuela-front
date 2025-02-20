@@ -5,12 +5,10 @@ import { useAfiliadoStore } from '@/helpers'
 import { cleanAfiliado, setActiveAfiliado } from '@/store/afiliado'
 import { DeleteModal } from '@/components/ui/DeleteModal'
 import { handleShowDelete } from '@/store/layout'
-import { TextInput } from 'flowbite-react'
-import { formatDate, getTipoBeca } from '@/constant/datos-id'
-import { edjaApi } from '@/api'
+import { Select, TextInput } from 'flowbite-react'
+import { ExportarExcel } from './exportarExcel'
 import EstadisticasAfiliados from './EstadisticasAfiliados'
 import Tooltip from '@/components/ui/Tooltip'
-import * as XLSX from 'xlsx'
 import Card from '@/components/ui/Card'
 import Pagination from '@/components/ui/Pagination'
 import Loading from '@/components/Loading'
@@ -18,6 +16,7 @@ import EditButton from '@/components/buttons/EditButton'
 import ViewButton from '@/components/buttons/ViewButton'
 import AfiliadoButton from '@/components/buttons/AfiliadoButton'
 import columnAfiliado from '@/json/columnAfiliado'
+import { edjaApi } from '../../api'
 
 export const Afiliado = () => {
   const navigate = useNavigate()
@@ -25,9 +24,9 @@ export const Afiliado = () => {
   const { user } = useSelector((state) => state.auth)
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [isExporting, setIsExporting] = useState(false)
+  const [formacionFilter, setFormacionFilter] = useState('')
+  const [formaciones, setFormaciones] = useState([])
   const [showEstadisticas, setShowEstadisticas] = useState(false)
-  let searchTimeout = null
 
   const {
     afiliados,
@@ -40,35 +39,41 @@ export const Afiliado = () => {
     startSearchAfiliado
   } = useAfiliadoStore()
 
-  const filteredAfiliados = (user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) ? afiliados : afiliados.filter(afiliado => afiliado.seccional_id === user.seccional_id)
+  const filteredAfiliados = afiliados
+    .filter(afiliado => (user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) || afiliado.seccional_id === user.seccional_id)
+    .filter(afiliado =>
+      formacionFilter === '' ||
+    afiliado.formacion?.some(f => f.formacion === formacionFilter)
+    )
 
-  function addAfiliado () {
+  const addAfiliado = () => {
     navigate('/alumnos/crear')
     dispatch(cleanAfiliado())
   }
 
-  async function showAfiliado (id) {
-    const currentPage = paginate?.current_page
+  const showAfiliado = async (id) => {
+    const currentPage = paginate?.current_page || 1
     await startEditAfiliado(id)
     navigate(`/alumnos/ver/${id}?page=${currentPage}`)
-    dispatch(cleanAfiliado())
   }
 
-  function onEdit (id) {
+  const onEdit = async (id) => {
     const currentPage = paginate?.current_page || 1
-    startEditAfiliado(id)
-    navigate(`/alumnos/editar/${id}?page=${currentPage}`)
+    await startEditAfiliado(id)
     dispatch(cleanAfiliado())
+    navigate(`/alumnos/editar/${id}?page=${currentPage}`)
   }
 
-  function onDelete (id) {
+  const onDelete = (id) => {
     const currentPage = paginate?.current_page || 1
     dispatch(setActiveAfiliado(id))
     dispatch(handleShowDelete())
     navigate(`/alumnos?page=${currentPage}`)
   }
 
-  async function onSearch ({ target: { value } }) {
+  let searchTimeout
+
+  const handleSearch = ({ target: { value } }) => {
     setSearch(value)
 
     if (searchTimeout) {
@@ -77,94 +82,44 @@ export const Afiliado = () => {
 
     searchTimeout = setTimeout(async () => {
       if (value.length === 0) {
-        await loadingAfiliado()
-      }
-      if (value.length > 1) {
+        await startLoadingAfiliado()
+      } else if (value.length > 2) {
         await startSearchAfiliado(value)
       }
     }, 1000)
   }
 
-  async function loadingAfiliado (page = 1) {
-    if (!isLoading) setIsLoading(true)
-    await startLoadingAfiliado(page)
-    await startGetAfiliadosSinPaginar()
-    setIsLoading(false)
-  }
-
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
-    const page = searchParams.get('page') || 1
-    loadingAfiliado(page)
+    const page = parseInt(searchParams.get('page'), 10) || 1
+
+    const fetchAfiliados = async () => {
+      setIsLoading(true)
+      await startLoadingAfiliado(page)
+      setIsLoading(false)
+      await startGetAfiliadosSinPaginar()
+    }
+
+    fetchAfiliados()
   }, [])
 
-  async function handlePersonalista () {
-    try {
-      const response = await edjaApi.get('personalista')
-      const { data } = response.data
-      return data
-    } catch (error) {
-      console.error('Error al obtener los datos:', error)
-      return []
-    }
-  }
-
-  // Función para exportar los datos a Excel
-  async function exportToExcel () {
-    setIsExporting(true)
-    const afiliados = await handlePersonalista()
-
-    if (afiliados.length === 0) {
-      console.log('No hay datos para exportar.')
-      setIsExporting(false)
-      return
+  useEffect(() => {
+    async function handleFormacion () {
+      try {
+        const response = await edjaApi.get('docenteAll')
+        const { data } = response.data
+        setFormaciones(data)
+      } catch (error) {
+        console.error('Error al obtener formaciones:', error)
+      }
     }
 
-    const personasData = []
-    const formacionData = []
+    handleFormacion()
+  }, [])
 
-    afiliados.forEach((activeAfiliado) => {
-      if (activeAfiliado.persona) {
-        personasData.push({
-          Nombre: activeAfiliado.persona.nombre?.toUpperCase(),
-          Apellido: activeAfiliado.persona.apellido?.toUpperCase(),
-          DNI: activeAfiliado.persona.dni,
-          'Fecha de Nacimiento': formatDate(activeAfiliado.persona.fecha_nacimiento),
-          'Edad de Ingreso': activeAfiliado.persona.edad,
-          Sexo: activeAfiliado.persona.sexo?.toUpperCase(),
-          Teléfono: activeAfiliado.persona.telefono,
-          Domicilio: activeAfiliado.persona.domicilio?.toUpperCase(),
-          Ocupacion: activeAfiliado.persona.ocupacion?.toUpperCase(),
-          Enfermedades: activeAfiliado.persona.enfermedad?.toUpperCase(),
-          Becas: getTipoBeca(activeAfiliado.persona.becas)?.toUpperCase() || '-',
-          Observacion: activeAfiliado.persona.observacion?.toUpperCase(),
-          Estado: activeAfiliado.persona.estados
-        })
-      }
-
-      if (activeAfiliado.formacion) {
-        formacionData.push(...activeAfiliado.formacion.map(formacion => ({
-          Nombre: activeAfiliado.persona.nombre?.toUpperCase(),
-          Apellido: activeAfiliado.persona.apellido?.toUpperCase(),
-          DNI: activeAfiliado.persona.dni,
-          'Tipo de Formación Profesional': formacion.formacion?.toUpperCase(),
-          'Fecha de Cursado': formatDate(formacion.fecha_cursado),
-          'Fecha de Finalizacion': formatDate(formacion.fecha_finalizacion) || 'Cursando...',
-          Observaciones: formacion.observaciones?.toUpperCase()
-        })))
-      }
-    })
-
-    const wb = XLSX.utils.book_new()
-    const personasSheet = XLSX.utils.json_to_sheet(personasData)
-    const formacionSheet = XLSX.utils.json_to_sheet(formacionData)
-
-    XLSX.utils.book_append_sheet(wb, personasSheet, 'Alumnos')
-    XLSX.utils.book_append_sheet(wb, formacionSheet, 'Formación Profesional')
-
-    XLSX.writeFile(wb, 'Alumnos.xlsx')
-    setIsExporting(false)
-  }
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <>
@@ -181,7 +136,7 @@ export const Afiliado = () => {
                       <TextInput
                         name='search'
                         placeholder='Buscar'
-                        onChange={onSearch}
+                        onChange={handleSearch}
                         value={search}
                       />
 
@@ -196,6 +151,19 @@ export const Afiliado = () => {
                         </svg>
                       </div>
                     </div>
+
+                    <Select
+                      name='formacionFilter'
+                      onChange={(e) => setFormacionFilter(e.target.value)}
+                      value={formacionFilter}
+                    >
+                      <option value=''>Filtrar formacion (En Desarrollo)</option>
+                      {formaciones.map((formacion) => (
+                        <option key={formacion.id} value={formacion.formacion}>
+                          {formacion.formacion.toUpperCase()}
+                        </option>
+                      ))}
+                    </Select>
 
                     <DeleteModal
                       themeClass='bg-slate-900 dark:bg-slate-800 dark:border-b dark:border-slate-700'
@@ -217,26 +185,23 @@ export const Afiliado = () => {
                       </Tooltip>
                     )}
 
-                    {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
-                      <button
-                        type='button'
-                        onClick={exportToExcel}
-                        className={`bg-green-500 ${isExporting ? 'cursor-not-allowed opacity-50' : 'hover:bg-green-700'} text-white items-center text-center py-2 px-6 rounded-lg`}
-                        disabled={isExporting}
-                      >
-                        {isExporting ? 'Exportando...' : 'Exportar'}
-                      </button>
-                    )}
-
                     <div className='flex gap-4'>
-                      {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
-                        <button
-                          type='button'
-                          onClick={addAfiliado}
-                          className='bg-blue-600 hover:bg-blue-800 text-white items-center text-center py-2 px-6 rounded-lg'
-                        >
-                          Agregar
-                        </button>
+                      {[1, 2, 3].includes(user.roles_id) && (
+                        <ExportarExcel />
+                      )}
+
+                      {[1, 2, 3].includes(user.roles_id) && (
+                        <div>
+                          <Tooltip content='Crear Alumno'>
+                            <button
+                              type='button'
+                              onClick={addAfiliado}
+                              className='bg-blue-600 hover:bg-blue-800 text-white items-center text-center py-2 px-6 rounded-lg'
+                            >
+                              Agregar
+                            </button>
+                          </Tooltip>
+                        </div>
                       )}
                     </div>
                   </div>

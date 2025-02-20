@@ -24,7 +24,6 @@ export const formatDate = (dateString) => {
     return ''
   }
 
-  // Ajustar la fecha para evitar problemas de huso horario
   const userTimezoneOffset = date.getTimezoneOffset() * 60000
   const adjustedDate = new Date(date.getTime() + userTimezoneOffset)
 

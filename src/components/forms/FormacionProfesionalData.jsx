@@ -35,6 +35,7 @@ function FormacionProfesionalData () {
   const [idCounter, setIdCounter] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [loadingFormaciones] = useState(false)
+  const [reloadKey, setReloadKey] = useState(0)
 
   function onChange ({ target }) {
     const { name, value } = target
@@ -46,7 +47,7 @@ function FormacionProfesionalData () {
 
   const getFormacionName = (formacionId) => {
     const formacionEncontrada = formacion.find(f => f.id === formacionId)
-    return formacionEncontrada ? formacionEncontrada.formacion : 'Desconocido'
+    return formacionEncontrada ? formacionEncontrada.formacion : 'No Especifica'
   }
 
   async function handleFormacion () {
@@ -194,8 +195,21 @@ function FormacionProfesionalData () {
     }
   }, [formaciones, loadingFormaciones, dispatch])
 
+  useEffect(() => {
+    if (activeAfiliado) {
+      const intervals = [100]
+      const timers = intervals.map((interval) =>
+        setTimeout(() => {
+          setReloadKey((prevKey) => prevKey + 1)
+        }, interval)
+      )
+
+      return () => timers.forEach(clearTimeout)
+    }
+  }, [activeAfiliado])
+
   return (
-    <>
+    <div key={reloadKey}>
       {isLoading
         ? (
           <Loading className='mt-28 md:mt-64' />
@@ -322,7 +336,7 @@ function FormacionProfesionalData () {
           </table>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
