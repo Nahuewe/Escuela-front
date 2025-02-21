@@ -18,10 +18,10 @@ export const ExportarExcel = () => {
   const baseColumns = [
     'Nombre', 'Apellido', 'DNI', 'Fecha de Nacimiento', 'Edad de Ingreso',
     'Sexo', 'Teléfono', 'Domicilio', 'Ocupacion',
-    'Enfermedades', 'Becas', 'Observaciones', 'Estado del Alumno'
+    'Enfermedades', 'Becas', 'Observaciones del Alumno', 'Estado del Alumno'
   ]
   const formacionColumns = [
-    'Tipo de Formacion Profesional', 'Fecha de Cursado', 'Fecha de Finalizacion', 'Observaciones'
+    'Tipo de Formación Profesional', 'Fecha de Cursado', 'Fecha de Finalizacion', 'Observaciones'
   ]
 
   const allColumns = [
@@ -68,27 +68,28 @@ export const ExportarExcel = () => {
 
       const formattedData = allData.flatMap((afiliado) => {
         const baseData = {
-          Nombre: afiliado.nombre?.toUpperCase() || '-',
-          Apellido: afiliado.apellido?.toUpperCase() || '-',
-          DNI: afiliado.dni || '-',
-          'Fecha de Nacimiento': formatDate(afiliado.fecha_nacimiento) || '-',
-          'Edad de Ingreso': afiliado.edad || '-',
-          Sexo: afiliado.sexo?.toUpperCase() || '-',
-          Teléfono: afiliado.telefono || '-',
-          Domicilio: afiliado.domicilio?.toUpperCase() || '-',
-          Ocupacion: afiliado.ocupacion?.toUpperCase() || '-',
-          Enfermedades: afiliado.enfermedad?.toUpperCase() || '-',
-          Becas: getTipoBeca(afiliado.becas)?.toUpperCase() || '-',
-          Observacion: afiliado.observacion?.toUpperCase() || '-',
-          Estado: afiliado.estados
+          Nombre: afiliado?.persona.nombre?.toUpperCase() || '-',
+          Apellido: afiliado?.persona.apellido?.toUpperCase() || '-',
+          DNI: afiliado?.persona.dni || '-',
+          'Fecha de Nacimiento': formatDate(afiliado?.persona.fecha_nacimiento) || '-',
+          'Edad de Ingreso': afiliado?.persona.edad || '-',
+          Sexo: afiliado?.persona.sexo?.toUpperCase() || '-',
+          Teléfono: afiliado?.persona.telefono || '-',
+          Domicilio: afiliado?.persona.domicilio?.toUpperCase() || '-',
+          Ocupacion: afiliado?.persona.ocupacion?.toUpperCase() || '-',
+          Enfermedades: afiliado?.persona.enfermedad?.toUpperCase() || '-',
+          Becas: getTipoBeca(afiliado?.persona.becas)?.toUpperCase() || '-',
+          Observacion: afiliado?.persona.observacion?.toUpperCase() || '-',
+          Estado: afiliado?.persona.estados
         }
 
+        // Si tiene formaciones, añadirlas como nuevas filas
         const formaciones = afiliado?.formacion?.map((formacion) => ({
           ...baseData,
-          'Tipo de Formación Profesional': formacion.formacion?.toUpperCase() || '-',
-          'Fecha de Cursado': formatDate(formacion.fecha_cursado) || '-',
-          'Fecha de Finalizacion': formatDate(formacion.fecha_finalizacion) || 'Cursando...',
-          Observaciones: formacion.observaciones?.toUpperCase() || '-'
+          'Tipo de Formación Profesional': formacion?.formacion?.toUpperCase() || '-',
+          'Fecha de Cursado': formatDate(formacion?.fecha_cursado) || '-',
+          'Fecha de Finalizacion': formatDate(formacion?.fecha_finalizacion) || 'Cursando...',
+          Observaciones: formacion?.observaciones?.toUpperCase() || '-'
         })) || []
 
         return [baseData, ...formaciones]
@@ -108,13 +109,6 @@ export const ExportarExcel = () => {
     }
   }
 
-  const openModal = async () => {
-    setIsModalOpen(true)
-    if (!dataLoaded) {
-      await fetchAfiliados()
-    }
-  }
-
   const handleExport = async () => {
     setIsExporting(true)
     try {
@@ -123,7 +117,7 @@ export const ExportarExcel = () => {
       )
 
       let filteredAfiliados = afiliados.filter((row) => {
-        if (formacionColumnsSelected && !row['Tipo de Formacion Profesional']) {
+        if (formacionColumnsSelected && !row['Tipo de Formación Profesional']) {
           return false
         }
         return true
@@ -132,7 +126,7 @@ export const ExportarExcel = () => {
       if (selectedColumns.every(col => baseColumns.includes(col))) {
         filteredAfiliados = filteredAfiliados.filter((value, index, self) =>
           index === self.findIndex((t) => (
-            t.Legajo === value.Legajo
+            t.DNI === value.DNI
           ))
         )
       }
@@ -154,6 +148,13 @@ export const ExportarExcel = () => {
     } finally {
       setIsExporting(false)
       setIsModalOpen(false)
+    }
+  }
+
+  const openModal = async () => {
+    setIsModalOpen(true)
+    if (!dataLoaded) {
+      await fetchAfiliados()
     }
   }
 

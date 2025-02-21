@@ -54,7 +54,7 @@ export const ShowAfiliado = () => {
                 <strong>Enfermedades:</strong> <span className='mayuscula'>{activeAfiliado.persona.enfermedad || '-'}</span>
               </div>
               <div className='border-b py-2 px-4'>
-                <strong>Becas:</strong> <span className='mayuscula'>{getTipoBeca(activeAfiliado.persona.becas || '-')}</span>
+                <strong>Becas:</strong> <span className='mayuscula'>{getTipoBeca(activeAfiliado.persona.becas) || '-'}</span>
               </div>
               <div className='border-b py-2 px-4'>
                 <strong>Observaciones:</strong> <span className='mayuscula'>{activeAfiliado.persona.observacion || '-'}</span>

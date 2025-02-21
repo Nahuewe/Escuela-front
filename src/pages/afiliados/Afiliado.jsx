@@ -6,7 +6,8 @@ import { cleanAfiliado, setActiveAfiliado } from '@/store/afiliado'
 import { DeleteModal } from '@/components/ui/DeleteModal'
 import { handleShowDelete } from '@/store/layout'
 import { Select, TextInput } from 'flowbite-react'
-import { ExportarExcel } from './exportarExcel'
+import { edjaApi } from '../../api'
+import { ExportarExcel } from './ExportarExcel'
 import EstadisticasAfiliados from './EstadisticasAfiliados'
 import Tooltip from '@/components/ui/Tooltip'
 import Card from '@/components/ui/Card'
@@ -16,7 +17,6 @@ import EditButton from '@/components/buttons/EditButton'
 import ViewButton from '@/components/buttons/ViewButton'
 import AfiliadoButton from '@/components/buttons/AfiliadoButton'
 import columnAfiliado from '@/json/columnAfiliado'
-import { edjaApi } from '../../api'
 
 export const Afiliado = () => {
   const navigate = useNavigate()
@@ -40,7 +40,7 @@ export const Afiliado = () => {
   } = useAfiliadoStore()
 
   const filteredAfiliados = afiliados
-    .filter(afiliado => (user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) || afiliado.seccional_id === user.seccional_id)
+    .filter(afiliado => (user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) || afiliado.formacion_id === user.formacion_id)
     .filter(afiliado =>
       formacionFilter === '' ||
     afiliado.formacion?.some(f => f.formacion === formacionFilter)

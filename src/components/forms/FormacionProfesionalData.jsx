@@ -220,6 +220,12 @@ function FormacionProfesionalData () {
               Formacion Profesional
             </h4>
 
+            <div className='bg-blue-100 dark:bg-blue-800 text-blue-900 dark:text-blue-100 p-4 rounded-lg shadow-md mb-2 mt-2'>
+              <p className='text-lg font-semibold text-center'>
+                Para agregar a la lista la formación, completa los datos y dale al botón <span className='font-bold text-blue-600 dark:text-blue-400'>"Agregar Formación"</span>.
+              </p>
+            </div>
+
             <Card>
               <form ref={formRef}>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
