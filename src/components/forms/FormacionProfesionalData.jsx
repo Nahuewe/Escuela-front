@@ -21,6 +21,7 @@ const initialForm = {
 }
 
 function FormacionProfesionalData () {
+  const formRef = useRef()
   const dispatch = useDispatch()
   const { register, setValue, reset } = useForm()
   const { activeAfiliado } = useSelector(state => state.afiliado)
@@ -30,7 +31,6 @@ function FormacionProfesionalData () {
   const [formaciones, setFormaciones] = useState([])
   const [editingFormacionId, setEditingFormacionId] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
-  const formRef = useRef()
   const [formacion, setFormacion] = useState([])
   const [idCounter, setIdCounter] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
@@ -222,7 +222,7 @@ function FormacionProfesionalData () {
 
             <div className='bg-blue-100 dark:bg-blue-800 text-blue-900 dark:text-blue-100 p-4 rounded-lg shadow-md mb-2 mt-2'>
               <p className='text-lg font-semibold text-center'>
-                Para agregar a la lista la formación, completa los datos y dale al botón <span className='font-bold text-blue-600 dark:text-blue-400'>"Agregar Formación"</span>.
+                Para agregar a la lista la formación, rellena los datos a continuación y dale al botón <span className='font-bold text-blue-600 dark:text-blue-400'>"Agregar Formación"</span>.
               </p>
             </div>
 

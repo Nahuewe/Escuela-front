@@ -18,14 +18,14 @@ export const ExportarExcel = () => {
   const baseColumns = [
     'Nombre', 'Apellido', 'DNI', 'Fecha de Nacimiento', 'Edad de Ingreso',
     'Sexo', 'Teléfono', 'Domicilio', 'Ocupacion',
-    'Enfermedades', 'Becas', 'Observaciones del Alumno', 'Estado del Alumno'
+    'Enfermedades', 'Becas', 'Observaciones', 'Estado del Alumno'
   ]
   const formacionColumns = [
-    'Tipo de Formación Profesional', 'Fecha de Cursado', 'Fecha de Finalizacion', 'Observaciones'
+    'Tipo de Formación Profesional', 'Fecha de Cursado', 'Fecha de Finalizacion', 'Observacion'
   ]
 
   const allColumns = [
-    { category: 'Datos del Alumno', columns: baseColumns },
+    { category: 'Alumno', columns: baseColumns },
     { category: 'Formacion', columns: formacionColumns }
   ]
 
@@ -83,7 +83,6 @@ export const ExportarExcel = () => {
           Estado: afiliado?.persona.estados
         }
 
-        // Si tiene formaciones, añadirlas como nuevas filas
         const formaciones = afiliado?.formacion?.map((formacion) => ({
           ...baseData,
           'Tipo de Formación Profesional': formacion?.formacion?.toUpperCase() || '-',

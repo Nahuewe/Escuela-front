@@ -7,7 +7,7 @@ import { DeleteModal } from '@/components/ui/DeleteModal'
 import { handleShowDelete } from '@/store/layout'
 import { Select, TextInput } from 'flowbite-react'
 import { edjaApi } from '../../api'
-import { ExportarExcel } from './exportarExcel'
+import { ExportarExcel } from './ExportarExcel'
 import EstadisticasAfiliados from './EstadisticasAfiliados'
 import Tooltip from '@/components/ui/Tooltip'
 import Card from '@/components/ui/Card'
@@ -27,6 +27,7 @@ export const Afiliado = () => {
   const [formacionFilter, setFormacionFilter] = useState('')
   const [formaciones, setFormaciones] = useState([])
   const [showEstadisticas, setShowEstadisticas] = useState(false)
+  const [isFormacionFiltered, setIsFormacionFiltered] = useState(false)
 
   const {
     afiliados,
@@ -39,12 +40,22 @@ export const Afiliado = () => {
     startSearchAfiliado
   } = useAfiliadoStore()
 
-  const filteredAfiliados = afiliados
-    .filter(afiliado => (user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) || afiliado.formacion_id === user.formacion_id)
-    .filter(afiliado =>
+  const filteredAfiliados = isFormacionFiltered
+    ? afiliadosSinPaginar.filter(afiliado =>
       formacionFilter === '' ||
-    afiliado.formacion?.some(f => f.formacion === formacionFilter)
+      afiliado.formacion?.some(f => f.formacion === formacionFilter)
     )
+    : afiliados.filter(afiliado =>
+      (user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) || afiliado.formacion_id === user.formacion_id
+    )
+
+  const handleFormacionFilterChange = (e) => {
+    setFormacionFilter(e.target.value)
+    setIsFormacionFiltered(e.target.value !== '')
+    if (e.target.value === '') {
+      startLoadingAfiliado(1)
+    }
+  }
 
   const addAfiliado = () => {
     navigate('/alumnos/crear')
@@ -154,10 +165,10 @@ export const Afiliado = () => {
 
                     <Select
                       name='formacionFilter'
-                      onChange={(e) => setFormacionFilter(e.target.value)}
+                      onChange={handleFormacionFilterChange}
                       value={formacionFilter}
                     >
-                      <option value=''>Filtrar formacion (En Desarrollo)</option>
+                      <option value=''>Filtrar por Formación</option>
                       {formaciones.map((formacion) => (
                         <option key={formacion.id} value={formacion.formacion}>
                           {formacion.formacion.toUpperCase()}
@@ -174,29 +185,31 @@ export const Afiliado = () => {
                       btnFunction={startDeleteAfiliado}
                     />
 
-                    {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
-                      <Tooltip content={showEstadisticas ? 'Ocultar estadísticas' : 'Mostrar estadísticas'}>
-                        <button
-                          onClick={() => setShowEstadisticas(!showEstadisticas)}
-                          className='bg-purple-500 hover:bg-purple-700 text-white items-center text-center py-2 px-6 rounded-lg'
-                        >
-                          {showEstadisticas ? 'Estadísticas' : 'Estadísticas'}
-                        </button>
-                      </Tooltip>
-                    )}
-
                     <div className='flex gap-4'>
+                      {(user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) && (
+                        <Tooltip content={showEstadisticas ? 'Ocultar estadísticas' : 'Mostrar estadísticas'}>
+                          <button
+                            onClick={() => setShowEstadisticas(!showEstadisticas)}
+                            className='bg-purple-500 hover:bg-purple-700 text-white items-center text-center py-2 px-6 rounded-lg'
+                          >
+                            {showEstadisticas ? 'Estadísticas' : 'Estadísticas'}
+                          </button>
+                        </Tooltip>
+                      )}
+
                       {[1, 2, 3].includes(user.roles_id) && (
                         <ExportarExcel />
                       )}
+                    </div>
 
+                    <div className='flex'>
                       {[1, 2, 3].includes(user.roles_id) && (
                         <div>
                           <Tooltip content='Crear Alumno'>
                             <button
                               type='button'
                               onClick={addAfiliado}
-                              className='bg-blue-600 hover:bg-blue-800 text-white items-center text-center py-2 px-6 rounded-lg'
+                              className='bg-blue-600 hover:bg-blue-800 text-white md:w-full w-[16.6rem] text-center py-2 px-6 rounded-lg'
                             >
                               Agregar
                             </button>
@@ -264,8 +277,8 @@ export const Afiliado = () => {
 
                       {/* Paginado */}
                       {
-                        paginate && (
-                          <div className='flex justify-center mt-8'>
+                        !isFormacionFiltered && paginate && (
+                          <div className='flex justify-start md:justify-center mt-8 ml-4'>
                             <Pagination
                               paginate={paginate}
                               onPageChange={(page) =>
