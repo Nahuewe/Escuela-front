@@ -5,7 +5,7 @@ import { formatDate, getTipoBeca } from '@/constant/datos-id'
 import Modal from 'react-modal'
 import * as XLSX from 'xlsx'
 
-const ExportarExcel = () => {
+export const ExportarExcel = () => {
   const [isExporting, setIsExporting] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedColumns, setSelectedColumns] = useState([])
@@ -296,5 +296,3 @@ const ExportarExcel = () => {
     </div>
   )
 }
-
-export default ExportarExcel
