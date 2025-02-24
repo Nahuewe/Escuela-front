@@ -91,8 +91,8 @@ function FormacionProfesionalData () {
     const selectedFormacionName = getFormacionName(formData.formacion_id)
 
     if (!formData.formacion_id || !picker) {
-      toast.error('Por favor, selecciona un tipo de formación y una fecha de cursado')
-      return // Detener el proceso si falta algún dato
+      toast.error('Por favor, selecciona un tipo de formación y una fecha de cursado. Luego, dale a "agregar formación"')
+      return
     }
 
     const newFormacion = {
@@ -301,7 +301,7 @@ function FormacionProfesionalData () {
                   className={`btn rounded-lg ${isEditing ? 'btn-purple' : 'btn-primary'}`}
                   onClick={addFormacion}
                 >
-                  {isEditing ? 'Terminar Edición' : 'Agregar Formacion'}
+                  {isEditing ? 'Terminar Edición' : 'Agregar Formación'}
                 </button>
               </div>
 
