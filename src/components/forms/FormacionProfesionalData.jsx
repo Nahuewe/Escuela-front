@@ -220,6 +220,12 @@ function FormacionProfesionalData () {
     }
   }, [activeAfiliado])
 
+  useEffect(() => {
+    if (formaciones.length > 0) {
+      setIsFormacionRequired(false)
+    }
+  }, [formaciones])
+
   return (
     <div key={reloadKey}>
       {isLoading
