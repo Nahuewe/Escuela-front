@@ -12,6 +12,7 @@ import Textarea from '@/components/ui/Textarea'
 import DatePicker from '../ui/DatePicker'
 import moment from 'moment'
 import Loading from '@/components/Loading'
+import { toast } from 'react-toastify'
 
 const initialForm = {
   formacion_id: null,
@@ -36,6 +37,7 @@ function FormacionProfesionalData () {
   const [isLoading, setIsLoading] = useState(true)
   const [loadingFormaciones] = useState(false)
   const [reloadKey, setReloadKey] = useState(0)
+  const [isFormacionRequired, setIsFormacionRequired] = useState(true)
 
   function onChange ({ target }) {
     const { name, value } = target
@@ -88,6 +90,11 @@ function FormacionProfesionalData () {
   function addFormacion () {
     const selectedFormacionName = getFormacionName(formData.formacion_id)
 
+    if (!formData.formacion_id || !picker) {
+      toast.error('Por favor, selecciona un tipo de formación y una fecha de cursado')
+      return // Detener el proceso si falta algún dato
+    }
+
     const newFormacion = {
       ...formData,
       nombre_formacion: selectedFormacionName,
@@ -105,6 +112,11 @@ function FormacionProfesionalData () {
     } else {
       setFormaciones((prevFormaciones) => [...prevFormaciones, newFormacion])
       setIdCounter(idCounter + 1)
+    }
+
+    // Si ya hay formaciones, ocultamos el cartel
+    if (formaciones.length === 0) {
+      setIsFormacionRequired(false)
     }
 
     onReset()
@@ -241,7 +253,7 @@ function FormacionProfesionalData () {
 
                   <div>
                     <label htmlFor='fecha_cursado' className='form-label'>
-                      Fecha de Cursado
+                      Fecha de Inicio del Cursado
                     </label>
                     <DatePicker
                       value={picker}
@@ -255,7 +267,7 @@ function FormacionProfesionalData () {
 
                   <div>
                     <label htmlFor='fecha_finalizacion' className='form-label'>
-                      Fecha de Finalizacion
+                      Fecha de Finalizacion del Cursado
                     </label>
                     <DatePicker
                       value={picker2}
@@ -292,6 +304,15 @@ function FormacionProfesionalData () {
                   {isEditing ? 'Terminar Edición' : 'Agregar Formacion'}
                 </button>
               </div>
+
+              {isFormacionRequired && (
+                <div className='bg-red-100 text-red-800 p-4 mt-4 rounded-md'>
+                  <p className='text-center font-semibold'>
+                    Debes agregar al menos una formación para continuar.
+                  </p>
+                </div>
+              )}
+
             </Card>
           </div>
           )}

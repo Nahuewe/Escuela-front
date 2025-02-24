@@ -43,7 +43,9 @@ export const Afiliado = () => {
   const filteredAfiliados = isFormacionFiltered
     ? afiliadosSinPaginar.filter(afiliado =>
       formacionFilter === '' ||
-      afiliado.formacion?.some(f => f.formacion === formacionFilter)
+      (formacionFilter === '-'
+        ? !afiliado.formacion || afiliado.formacion.length === 0
+        : afiliado.formacion?.some(f => f.formacion === formacionFilter))
     )
     : afiliados.filter(afiliado =>
       (user.roles_id === 1 || user.roles_id === 2 || user.roles_id === 3) || afiliado.formacion_id === user.formacion_id
@@ -169,6 +171,7 @@ export const Afiliado = () => {
                       value={formacionFilter}
                     >
                       <option value=''>Filtrar por Formación</option>
+                      <option value='-'>Sin Formación</option>
                       {formaciones.map((formacion) => (
                         <option key={formacion.id} value={formacion.formacion}>
                           {formacion.formacion.toUpperCase()}
