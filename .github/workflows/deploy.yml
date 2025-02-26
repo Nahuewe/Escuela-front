@@ -32,10 +32,6 @@ jobs:
 
       - name: Build the project
         run: npm run build
-
-      - name: Limpiar la caché de Laravel
-        run: |
-          ssh ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} "cd sistema.edjan4.com && php artisan cache:clear"
       
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
