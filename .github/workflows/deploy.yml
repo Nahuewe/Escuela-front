@@ -32,6 +32,9 @@ jobs:
 
       - name: Build the project
         run: npm run build
+
+      - name: List files in dist
+        run: ls -alh dist/
       
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
