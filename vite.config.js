@@ -1,18 +1,16 @@
-import { defineConfig } from "vite";
-//import reactRefresh from "@vitejs/plugin-react-refresh";
-import react from "@vitejs/plugin-react";
-import path from "path";
-import rollupReplace from "@rollup/plugin-replace";
-// https://vitejs.dev/config/
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
+import rollupReplace from '@rollup/plugin-replace'
+
 export default defineConfig({
   resolve: {
     alias: [
       {
-        // "@": path.resolve(__dirname, "./src"),
-        find: "@",
-        replacement: path.resolve(__dirname, "./src"),
-      },
-    ],
+        find: '@',
+        replacement: path.resolve(__dirname, './src')
+      }
+    ]
   },
 
   plugins: [
@@ -20,10 +18,20 @@ export default defineConfig({
       preventAssignment: true,
       values: {
         __DEV__: JSON.stringify(true),
-        "process.env.NODE_ENV": JSON.stringify("development"),
-      },
+        'process.env.NODE_ENV': JSON.stringify('development')
+      }
     }),
-    react(),
-    //reactRefresh(),
+    react()
   ],
-});
+
+  build: {
+    rollupOptions: {
+      output: {
+        // Esto genera nombres de archivo con hashes para los archivos JS, CSS y otros assets
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash].[ext]'
+      }
+    }
+  }
+})
