@@ -252,7 +252,14 @@ export const Afiliado = () => {
                                   <td className='table-td'>{afiliado.dni || '-'}</td>
                                   <td className='table-td'>{afiliado.telefono || '-'}</td>
                                   <td className='table-td mayuscula'>
-                                    {afiliado.formacion?.length > 0 ? afiliado.formacion[afiliado.formacion.length - 1].formacion : '-'}
+                                    {afiliado.formacion?.length > 0 ? afiliado.formacion[afiliado.formacion.length - 1]?.formacion : '-'}
+                                  </td>
+                                  <td className='table-td'>
+                                    {afiliado?.formacion?.length > 0
+                                      ? [...new Set(afiliado?.formacion?.map(f => f?.fecha_cursado?.split('-')[0]))]
+                                          .sort((a, b) => a - b)
+                                          .join(', ')
+                                      : '-'}
                                   </td>
                                   <td className='table-td'>
                                     <span

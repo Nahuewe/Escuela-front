@@ -6,13 +6,13 @@ import { SelectForm } from '@/components/edja/forms'
 import { Icon } from '@iconify/react'
 import { formatDate } from '@/constant/datos-id'
 import { edjaApi } from '@/api'
+import { toast } from 'react-toastify'
 import Tooltip from '@/components/ui/Tooltip'
 import Card from '@/components/ui/Card'
 import Textarea from '@/components/ui/Textarea'
 import DatePicker from '../ui/DatePicker'
 import moment from 'moment'
 import Loading from '@/components/Loading'
-import { toast } from 'react-toastify'
 
 const initialForm = {
   formacion_id: null,
@@ -24,7 +24,7 @@ const initialForm = {
 function FormacionProfesionalData () {
   const formRef = useRef()
   const dispatch = useDispatch()
-  const { register, setValue, reset } = useForm()
+  const { register, setValue, reset, watch } = useForm()
   const { activeAfiliado } = useSelector(state => state.afiliado)
   const [picker, setPicker] = useState(null)
   const [picker2, setPicker2] = useState(null)
@@ -39,23 +39,26 @@ function FormacionProfesionalData () {
   const [reloadKey, setReloadKey] = useState(0)
   const [isFormacionRequired, setIsFormacionRequired] = useState(true)
 
+  const onReset = () => {
+    formRef.current.reset()
+    setPicker(null)
+    setPicker2(null)
+    setFormData(initialForm)
+    setIsEditing(false)
+    setEditingFormacionId(null)
+    reset(initialForm)
+    setValue('formacion_id', '')
+    setValue('fecha_cursado', '')
+    setValue('fecha_finalizacion', '')
+    setValue('observaciones', '')
+  }
+
   function onChange ({ target }) {
     const { name, value } = target
     setFormData((prevState) => ({
       ...prevState,
       [name]: value
     }))
-  }
-
-  const getFormacionName = (formacionId) => {
-    const formacionEncontrada = formacion.find(f => f.id === formacionId)
-    return formacionEncontrada ? formacionEncontrada.formacion : 'No Especifica'
-  }
-
-  async function handleFormacion () {
-    const response = await edjaApi.get('docenteAll')
-    const { data } = response.data
-    setFormacion(data)
   }
 
   const handleDateChange = (date, field) => {
@@ -77,21 +80,22 @@ function FormacionProfesionalData () {
     }))
   }
 
-  const onReset = () => {
-    formRef.current.reset()
-    setPicker(null)
-    setPicker2(null)
-    setFormData(initialForm)
-    setIsEditing(false)
-    setEditingFormacionId(null)
-    reset(initialForm)
+  const getFormacionName = (formacionId) => {
+    const formacionEncontrada = formacion.find(f => f.id === formacionId)
+    return formacionEncontrada ? formacionEncontrada.formacion : 'No Especifica'
   }
 
-  function addFormacion () {
+  async function handleFormacion () {
+    const response = await edjaApi.get('docenteAll')
+    const { data } = response.data
+    setFormacion(data)
+  }
+
+  const addFormacion = () => {
     const selectedFormacionName = getFormacionName(formData.formacion_id)
 
     if (!formData.formacion_id || !picker) {
-      toast.error('Por favor, selecciona un tipo de formación y una fecha de cursado. Luego, dale a "agregar formación"')
+      toast.error('Por favor, selecciona un tipo de formación y una fecha de cursado.')
       return
     }
 
@@ -100,7 +104,7 @@ function FormacionProfesionalData () {
       nombre_formacion: selectedFormacionName,
       fecha_cursado: picker ? moment(picker[0]).format('YYYY-MM-DD') : null,
       fecha_finalizacion: picker2 ? moment(picker2[0]).format('YYYY-MM-DD') : null,
-      id: isEditing ? editingFormacionId : idCounter
+      id: isEditing ? editingFormacionId : formData.id || idCounter
     }
 
     if (isEditing) {
@@ -109,17 +113,32 @@ function FormacionProfesionalData () {
           formacion.id === editingFormacionId ? newFormacion : formacion
         )
       )
+      setIsEditing(false)
+      setEditingFormacionId(null)
     } else {
       setFormaciones((prevFormaciones) => [...prevFormaciones, newFormacion])
       setIdCounter(idCounter + 1)
     }
 
-    // Si ya hay formaciones, ocultamos el cartel
     if (formaciones.length === 0) {
       setIsFormacionRequired(false)
     }
 
+    dispatch(onAddOrUpdateFormacion(newFormacion))
     onReset()
+  }
+
+  const handleAddOrUpdateFamiliar = () => {
+    const newFormacion = {
+      ...formData,
+      id: isEditing ? editingFormacionId : idCounter,
+      formacion_id: parseInt(watch('formacion_id')) || null,
+      fecha_cursado: picker ? moment(picker[0]).format('YYYY-MM-DD') : null,
+      fecha_finalizacion: picker2 ? moment(picker2[0]).format('YYYY-MM-DD') : null,
+      observaciones: watch('observaciones') || null
+    }
+
+    addFormacion(newFormacion)
   }
 
   const handleEdit = (formacion) => {
@@ -129,7 +148,8 @@ function FormacionProfesionalData () {
     setFormData({
       ...formacion,
       fecha_cursado: formacion.fecha_cursado,
-      fecha_finalizacion: formacion.fecha_finalizacion
+      fecha_finalizacion: formacion.fecha_finalizacion,
+      id: formacion.id
     })
 
     setEditingFormacionId(formacion.id)
@@ -305,7 +325,7 @@ function FormacionProfesionalData () {
                 <button
                   type='button'
                   className={`btn rounded-lg ${isEditing ? 'btn-purple' : 'btn-primary'}`}
-                  onClick={addFormacion}
+                  onClick={handleAddOrUpdateFamiliar}
                 >
                   {isEditing ? 'Terminar Edición' : 'Agregar Formación'}
                 </button>
